@@ -1,6 +1,10 @@
 import { AnimatedSection } from "@/components/AnimatedSection";
-import { Play } from "lucide-react";
+import { Play, X } from "lucide-react";
 import type { VideosContent } from "@/types";
+import { useState, useEffect } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Dialog, DialogContent, DialogClose, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 function getYouTubeId(url: string): string | null {
   const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/);
@@ -14,48 +18,112 @@ function getThumbnail(item: { thumbnail?: string; url: string }): string | null 
 }
 
 export function Videos({ content }: { content: VideosContent }) {
-  if (!content.items.length) return null;
+  const title = content.title || "O especialista por trás da Sleiman";
+  const tag = content.tag || "Aprenda com quem sabe";
+  const subtitle = content.subtitle || "Assista antes de decidir.";
+  const [loadedThumbnails, setLoadedThumbnails] = useState<Record<number, boolean>>({});
+  const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
+  const clickAction = content.clickAction || "youtube";
+
+  useEffect(() => {
+    if (selectedVideo) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [selectedVideo]);
+
+  if (!content.items || !content.items.length) return null;
   return (
-    <section className="py-20 md:py-28 px-4 sm:px-8 bg-white">
+    <section id="videos" className="py-20 md:py-28 px-4 sm:px-8 bg-white">
       <div className="max-w-[1100px] mx-auto">
         <AnimatedSection>
-          <p className="text-[11px] font-semibold tracking-[2px] uppercase text-gold mb-4">— {content.tag || "Vídeos"}</p>
+          <p className="text-[11px] font-semibold tracking-[2px] uppercase text-gold mb-4">— {tag}</p>
           <h2 className="font-heading text-[clamp(2rem,4vw,3.25rem)] font-normal text-midnight leading-[1.1]">
-            {content.title}
+            {title.includes("—") ? (
+              <>{title.split("—")[0]}<br /><em className="italic text-gold">{title.split("—")[1]}</em></>
+            ) : (
+              title
+            )}
           </h2>
-          <p className="text-[17px] text-muted-foreground font-light mt-4 max-w-[560px]">{content.subtitle}</p>
+          <p className="text-[17px] text-muted-foreground font-light mt-4 max-w-[560px]">{subtitle}</p>
         </AnimatedSection>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-14">
-          {content.items.map((v, i) => (
-            <AnimatedSection key={i} delay={i * 0.1}>
-              <a
-                href={v.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => {
-                  e.preventDefault();
-                  window.open(v.url, "_blank", "noopener,noreferrer");
-                }}
-                className="group block rounded-2xl overflow-hidden border border-[#EDE8DC] transition-all duration-300 hover:shadow-[0_20px_48px_rgba(0,0,0,0.1)] hover:-translate-y-1 cursor-pointer"
-              >
-                <div className="relative aspect-video bg-gradient-to-br from-navy to-midnight">
-                  <span className="absolute top-3 left-3 font-heading text-5xl font-bold text-gold/15">{String(i + 1).padStart(2, "0")}</span>
-                  {(() => { const thumb = getThumbnail(v); return thumb ? <img src={thumb} alt={v.title} className="w-full h-full object-cover opacity-60" loading="lazy" /> : null; })()}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-12 h-12 rounded-full bg-gold/90 group-hover:bg-gold group-hover:scale-110 flex items-center justify-center transition-all duration-200">
-                      <Play className="w-[18px] h-[18px] text-midnight ml-0.5" fill="currentColor" />
+          {content.items.map((v, i) => {
+            const isShorts = v.url.includes("shorts");
+            const thumb = getThumbnail(v);
+            
+            return (
+              <AnimatedSection key={i} delay={i * 0.1} className="h-full">
+                <div
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (clickAction === "modal") {
+                      setSelectedVideo(v.url);
+                    } else {
+                      window.open(v.url, "_blank", "noopener,noreferrer");
+                    }
+                  }}
+                  className="group flex flex-col h-full rounded-2xl overflow-hidden border border-[#EDE8DC] transition-all duration-300 hover:shadow-[0_20px_48px_rgba(0,0,0,0.1)] hover:-translate-y-1 cursor-pointer"
+                >
+                  <div className={`relative bg-muted overflow-hidden shrink-0 ${isShorts ? "aspect-[9/16]" : "aspect-video"}`}>
+                    <span className="absolute top-3 left-3 font-heading text-5xl font-bold text-gold/15 z-10">{String(i + 1).padStart(2, "0")}</span>
+                    
+                    {!loadedThumbnails[i] && (
+                      <Skeleton className="absolute inset-0 w-full h-full" />
+                    )}
+
+                    {thumb && (
+                      <img 
+                        src={thumb} 
+                        alt={v.title} 
+                        onLoad={() => setLoadedThumbnails(prev => ({ ...prev, [i]: true }))}
+                        className={`w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300 ${!loadedThumbnails[i] ? 'invisible' : 'visible'}`} 
+                        loading="lazy" 
+                      />
+                    )}
+
+                    <div className="absolute inset-0 flex items-center justify-center z-10">
+                      <div className="w-12 h-12 rounded-full bg-gold/90 group-hover:bg-gold group-hover:scale-110 flex items-center justify-center transition-all duration-200">
+                        <Play className="w-[18px] h-[18px] text-midnight ml-0.5" fill="currentColor" />
+                      </div>
                     </div>
                   </div>
+                  <div className="p-5 flex-grow">
+                    <p className="text-[10px] font-bold uppercase tracking-[1.5px] text-gold mb-1.5">{v.tag}</p>
+                    <h3 className="font-heading text-[17px] font-semibold text-midnight leading-snug">{v.title}</h3>
+                  </div>
                 </div>
-                <div className="p-5">
-                  <p className="text-[10px] font-bold uppercase tracking-[1.5px] text-gold mb-1.5">{v.tag || "Vídeo"}</p>
-                  <h3 className="font-heading text-[17px] font-semibold text-midnight leading-snug">{v.title}</h3>
-                </div>
-              </a>
-            </AnimatedSection>
-          ))}
+              </AnimatedSection>
+            );
+          })}
         </div>
       </div>
+
+      <Dialog open={!!selectedVideo} onOpenChange={(open) => !open && setSelectedVideo(null)}>
+        <DialogContent className="max-w-[95vw] md:max-w-[85vw] lg:max-w-[70vw] p-0 bg-black/90 border-none shadow-2xl overflow-hidden aspect-video">
+          <VisuallyHidden>
+            <DialogTitle>Vídeo</DialogTitle>
+            <DialogDescription>Visualização de vídeo expandida</DialogDescription>
+          </VisuallyHidden>
+          
+          <DialogClose className="absolute right-4 top-4 z-50 rounded-full p-2 bg-black/40 text-white hover:bg-black/60 transition-colors">
+            <X className="w-6 h-6" />
+          </DialogClose>
+          
+          {selectedVideo && (
+            <iframe
+              src={`https://www.youtube.com/embed/${getYouTubeId(selectedVideo)}?autoplay=1`}
+              className="w-full h-full border-none"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </section>
   );
 }

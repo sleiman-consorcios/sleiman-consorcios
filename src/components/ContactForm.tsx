@@ -3,9 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { formatPhone, isValidPhone } from "@/utils/phone";
+import { formatPhone, isValidPhone, isWhatsApp } from "@/utils/phone";
 import { buildWhatsAppUrl, buildContactMessage } from "@/utils/whatsapp";
-import { MessageCircle, Send, Loader2 } from "lucide-react";
+import { MessageCircle, Send, Loader2, CheckCircle2 } from "lucide-react";
 
 interface Props {
   whatsapp: string;
@@ -20,6 +20,8 @@ export function ContactForm({ whatsapp, objectives, creditRanges, ctaWhatsapp = 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [checkingWhatsApp, setCheckingWhatsApp] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
 
   function validate() {
     const e: Record<string, string> = {};
@@ -31,8 +33,19 @@ export function ContactForm({ whatsapp, objectives, creditRanges, ctaWhatsapp = 
     return Object.keys(e).length === 0;
   }
 
-  function submit() {
+  async function submit() {
     if (!validate()) return;
+    
+    setCheckingWhatsApp(true);
+    const validWA = await isWhatsApp(form.phone);
+    setCheckingWhatsApp(false);
+
+    if (!validWA) {
+      setErrors(prev => ({ ...prev, phone: "WhatsApp não encontrado ou inválido" }));
+      return;
+    }
+
+    setIsVerified(true);
     setLoading(true);
     const msg = buildContactMessage({ name: form.name, phone: form.phone, objective: form.objective, creditRange: form.creditRange, message: form.message });
     window.open(buildWhatsAppUrl(whatsapp, msg), "_blank");
@@ -57,7 +70,21 @@ export function ContactForm({ whatsapp, objectives, creditRanges, ctaWhatsapp = 
         {errors.name && <p className="text-xs text-destructive mt-1">{errors.name}</p>}
       </div>
       <div>
-        <Input placeholder="(11) 99999-9999" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: formatPhone(e.target.value) }))} aria-label="WhatsApp" className={errors.phone ? "border-destructive" : ""} />
+        <div className="relative">
+          <Input 
+            placeholder="(11) 99999-9999" 
+            value={form.phone} 
+            onChange={e => {
+              setForm(f => ({ ...f, phone: formatPhone(e.target.value) }));
+              setIsVerified(false);
+            }} 
+            aria-label="WhatsApp" 
+            className={errors.phone ? "border-destructive pr-10" : "pr-10"} 
+          />
+          <div className="absolute right-3 top-1/2 -translate-y-1/2">
+            {checkingWhatsApp ? <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" /> : isVerified ? <CheckCircle2 className="w-4 h-4 text-whatsapp" /> : null}
+          </div>
+        </div>
         {errors.phone && <p className="text-xs text-destructive mt-1">{errors.phone}</p>}
       </div>
       <div>
@@ -75,9 +102,9 @@ export function ContactForm({ whatsapp, objectives, creditRanges, ctaWhatsapp = 
         {errors.creditRange && <p className="text-xs text-destructive mt-1">{errors.creditRange}</p>}
       </div>
       <Textarea placeholder="Mensagem (opcional)" value={form.message} onChange={e => setForm(f => ({ ...f, message: e.target.value }))} rows={3} aria-label="Mensagem" />
-      <Button onClick={submit} disabled={loading} className="w-full gap-2 bg-whatsapp hover:bg-whatsapp/90 text-white">
-        {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-        {ctaWhatsapp}
+      <Button onClick={submit} disabled={loading || checkingWhatsApp} className="w-full gap-2 bg-whatsapp hover:bg-whatsapp/90 text-white">
+        {loading || checkingWhatsApp ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+        {checkingWhatsApp ? "Verificando WhatsApp..." : ctaWhatsapp}
       </Button>
     </div>
   );

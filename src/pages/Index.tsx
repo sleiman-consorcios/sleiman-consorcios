@@ -2,6 +2,7 @@ import { useEffect, useMemo } from "react";
 import { useConfig } from "@/hooks/useConfig";
 import { UnavailablePage } from "@/components/UnavailablePage";
 import { WhatsAppFloating } from "@/components/WhatsAppFloating";
+import { SeoManager } from "@/components/SeoManager";
 import { Header } from "@/sections/Header";
 import { Hero } from "@/sections/Hero";
 import { Credibility } from "@/sections/Credibility";
@@ -18,6 +19,7 @@ import { FinalCta } from "@/sections/FinalCta";
 import { Footer } from "@/sections/Footer";
 import { PromoBanner } from "@/sections/PromoBanner";
 import { Cardapio } from "@/sections/Cardapio";
+import { News } from "@/sections/News";
 import type { SectionKey } from "@/types";
 import { DEFAULT_SECTION_ORDER } from "@/types";
 
@@ -25,11 +27,11 @@ const defaultSections = {
   hero: true, credibility: true, about: true, howItWorks: true,
   objectives: true, comparison: true, simulator: true, videos: true,
   testimonials: true, security: true, faq: true, finalCta: true,
-  promoBanner: false, cardapio: false,
+  promoBanner: true, cardapio: true, news: true,
 };
 
 const Index = () => {
-  const { siteConfig, content, loading } = useConfig();
+  const { siteConfig, content, loading, state } = useConfig();
 
   useEffect(() => {
     if (siteConfig?.theme) {
@@ -43,18 +45,18 @@ const Index = () => {
     return [...saved, ...DEFAULT_SECTION_ORDER.filter(k => !saved.includes(k))];
   }, [siteConfig?.sectionOrder]);
 
-  if (loading) {
+  if (loading && (!siteConfig || !content)) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-warm-white">
+      <div className="min-h-screen flex items-center justify-center bg-warm-white transition-opacity duration-300">
         <div className="w-8 h-8 border-2 border-gold border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
-  if (!siteConfig || !content) {
+  if (state === "error" || (!loading && (!siteConfig || !content))) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-warm-white">
-        <p className="text-muted-foreground">Erro ao carregar configuração.</p>
+        <p className="text-muted-foreground">Erro ao carregar configuração. Por favor, recarregue a página.</p>
       </div>
     );
   }
@@ -81,21 +83,25 @@ const Index = () => {
     howItWorks: <HowItWorks content={content.howItWorks} />,
     objectives: <Objectives content={content.objectives} />,
     comparison: <Comparison content={content.comparison} />,
-    cardapio: <Cardapio content={content.cardapio || defaultCardapio} />,
-    simulator: <Simulator content={content.simulator} whatsapp={siteConfig.contact.whatsapp} />,
+    cardapio: <Cardapio content={content.cardapio} />,
+    simulator: <Simulator content={content.simulator} config={siteConfig} webhookUrl={siteConfig.webhookUrl} />,
     videos: <Videos content={content.videos} />,
     testimonials: <Testimonials content={content.testimonials} />,
     security: <Security content={content.security} />,
     faq: <FAQ content={content.faq} />,
     finalCta: <FinalCta content={content.finalCta} config={siteConfig} />,
+    news: <News content={content.news} />,
   };
 
   return (
-    <div className="min-h-screen bg-warm-white text-foreground">
+    <div className="min-h-screen bg-warm-white text-foreground pt-16">
+      <SeoManager siteConfig={siteConfig} />
       <Header nav={content.nav} config={siteConfig} />
       {sectionOrder.map(key => s[key] ? <div key={key}>{sectionComponents[key]}</div> : null)}
       <Footer content={content.footer} config={siteConfig} />
-      <WhatsAppFloating phone={siteConfig.contact.whatsapp} />
+      {(siteConfig.contact.showWhatsappFloating ?? true) && (
+        <WhatsAppFloating phone={siteConfig.contact.whatsapp} message={siteConfig.contact.whatsappMessage} />
+      )}
     </div>
   );
 };

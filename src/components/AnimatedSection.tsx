@@ -1,9 +1,21 @@
 import { motion } from "framer-motion";
 import type { ReactNode } from "react";
 
-export function AnimatedSection({ children, className = "", delay = 0 }: {
-  children: ReactNode; className?: string; delay?: number;
+export function AnimatedSection({ 
+  children, 
+  className = "", 
+  delay = 0,
+  noAnimation = false
+}: {
+  children: ReactNode; 
+  className?: string; 
+  delay?: number;
+  noAnimation?: boolean;
 }) {
+  if (noAnimation) {
+    return <div className={className}>{children}</div>;
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}

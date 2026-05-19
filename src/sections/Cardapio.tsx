@@ -13,6 +13,22 @@ export function Cardapio({ content }: Props) {
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
 
+  const formatCurrency = (val: string | number | undefined) => {
+    if (val === undefined || val === "") return "";
+    if (typeof val === "string") {
+      if (val.toLowerCase().includes("mil") || val.includes("R$") || val.includes("milhões")) return val;
+      const num = parseFloat(val.replace(/[^\d.,]/g, "").replace(",", "."));
+      if (isNaN(num)) return val;
+      val = num;
+    }
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(val as number);
+  };
+
   function checkScroll() {
     const el = scrollRef.current;
     if (!el) return;
@@ -97,9 +113,17 @@ export function Cardapio({ content }: Props) {
                     )}
                   </div>
                   <div className="p-4 text-center">
-                    <p className="text-muted-foreground text-sm mb-1">Parcela a partir de:</p>
-                    <p className="text-primary font-bold text-xl">
-                      {item.installmentText}
+                    {item.totalValue && (
+                      <div className="mb-3 p-2 bg-muted/30 rounded-lg border border-border/50">
+                        <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold mb-0.5">Carta de Crédito</p>
+                        <p className="text-foreground font-bold text-lg leading-tight font-numbers">
+                          A partir de {formatCurrency(item.totalValue)}
+                        </p>
+                      </div>
+                    )}
+                    <p className="text-muted-foreground text-[11px] mb-0.5 uppercase tracking-wide">Parcelas mensais de:</p>
+                    <p className="text-primary font-bold text-2xl font-numbers">
+                      {formatCurrency(item.installmentText)}
                     </p>
                   </div>
                 </div>

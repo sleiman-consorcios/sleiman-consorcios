@@ -5,13 +5,20 @@ import type { SecurityContent } from "@/types";
 const securityEmojis = ["🚫", "💳", "🔑", "🏛️", "⚡", "📊"];
 
 export function Security({ content }: { content: SecurityContent }) {
+  const title = content.title || "Vantagens do consórcio";
+  const tag = content.tag || "Por que escolher";
+  
   return (
     <section className="py-20 md:py-28 px-4 sm:px-8 bg-warm-white">
       <div className="max-w-[1100px] mx-auto">
         <AnimatedSection>
-          <p className="text-[11px] font-semibold tracking-[2px] uppercase text-gold mb-4">— Por que escolher</p>
+          <p className="text-[11px] font-semibold tracking-[2px] uppercase text-gold mb-4">— {tag}</p>
           <h2 className="font-heading text-[clamp(2rem,4vw,3.25rem)] font-normal text-midnight leading-[1.1]">
-            Vantagens do<br /><em className="italic text-gold">consórcio</em>
+            {title.includes("—") ? (
+              <>{title.split("—")[0]}<br /><em className="italic text-gold">{title.split("—")[1]}</em></>
+            ) : (
+              title
+            )}
           </h2>
         </AnimatedSection>
         <div className="grid sm:grid-cols-2 gap-5 mt-14">

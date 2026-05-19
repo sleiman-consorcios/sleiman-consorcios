@@ -4,14 +4,20 @@ import type { FAQContent } from "@/types";
 
 export function FAQ({ content }: { content: FAQContent }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const title = content.title || "Perguntas frequentes";
+  const tag = content.tag || "Tire suas dúvidas";
 
   return (
     <section id="faq" className="py-20 md:py-28 px-4 sm:px-8 bg-cream">
       <div className="max-w-[1100px] mx-auto">
         <AnimatedSection>
-          <p className="text-[11px] font-semibold tracking-[2px] uppercase text-gold mb-4">— Tire suas dúvidas</p>
+          <p className="text-[11px] font-semibold tracking-[2px] uppercase text-gold mb-4">— {tag}</p>
           <h2 className="font-heading text-[clamp(2rem,4vw,3.25rem)] font-normal text-midnight leading-[1.1]">
-            Perguntas<br /><em className="italic text-gold">frequentes</em>
+            {title.includes("—") ? (
+              <>{title.split("—")[0]}<br /><em className="italic text-gold">{title.split("—")[1]}</em></>
+            ) : (
+              title
+            )}
           </h2>
         </AnimatedSection>
         <div className="flex flex-col gap-3 mt-14 max-w-[800px]">

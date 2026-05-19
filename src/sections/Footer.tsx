@@ -1,4 +1,5 @@
-import { Instagram, Facebook, Youtube, Linkedin } from "lucide-react";
+import { Instagram, Facebook, Youtube, Linkedin, MapPin, Mail, FileText, Phone } from "lucide-react";
+import { buildWhatsAppUrl } from "@/utils/whatsapp";
 import type { FooterContent, SiteConfig } from "@/types";
 
 interface Props { content: FooterContent; config: SiteConfig }
@@ -21,13 +22,35 @@ export function Footer({ content, config }: Props) {
       <div className="max-w-[1100px] mx-auto">
         <div className="grid md:grid-cols-[2fr_1fr_1fr_1fr] gap-12 pb-12 border-b border-white/[0.08]">
           <div>
-            <div className="flex items-center gap-2.5 mb-4">
-              <div className="w-9 h-9 bg-gold rounded-lg flex items-center justify-center font-heading text-lg font-bold text-midnight">S</div>
-              <span className="font-heading text-lg font-semibold text-white">{config.brand.name}</span>
+            {content.description && (
+              <p className="text-[14px] text-white/40 leading-[1.7] max-w-[260px] mb-8">{content.description}</p>
+            )}
+            
+            <div className="flex items-center gap-3 mb-6">
+              {config.brand.logo ? (
+                <img 
+                  src={config.brand.logo} 
+                  alt={config.brand.name} 
+                  className="h-9 w-auto object-contain" 
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                />
+              ) : (
+                <div className="w-9 h-9 bg-gold rounded-lg flex items-center justify-center font-heading text-lg font-bold text-midnight">S</div>
+              )}
+              {!config.brand.hideName && (
+                <div className="flex flex-col -gap-1">
+                  <span className="font-heading text-xl font-bold text-white tracking-[0.05em] uppercase leading-tight">
+                    {config.brand.name.split(' ')[0] || "Sleiman"}
+                  </span>
+                  <span className="font-body text-[11px] font-bold text-gold/80 tracking-[0.2em] lowercase leading-tight">
+                    {config.brand.name.split(' ').slice(1).join(' ') || "consórcios"}
+                  </span>
+                </div>
+              )}
             </div>
-            <p className="text-[14px] text-white/40 leading-[1.7] max-w-[260px]">{content.description}</p>
+
             {socials.length > 0 && (
-              <div className="flex items-center gap-3 mt-5">
+              <div className="flex items-center gap-3">
                 {socials.map(({ url, Icon, label }) => (
                   <a key={label} href={url} target="_blank" rel="noopener noreferrer" aria-label={label}
                     className="w-9 h-9 flex items-center justify-center rounded-full bg-white/5 hover:bg-gold hover:text-midnight text-white/60 transition-colors">
@@ -40,7 +63,7 @@ export function Footer({ content, config }: Props) {
           <div>
             <p className="text-[11px] font-bold uppercase tracking-[1.5px] text-gold mb-4">Navegação</p>
             <ul className="space-y-2.5">
-              {(content.navLinks || ["Como funciona", "Vantagens", "Produtos", "FAQ"]).map((link, i) => (
+              {(content.navLinks && content.navLinks.length > 0 ? content.navLinks : ["Como funciona", "Vantagens", "Produtos", "FAQ"]).map((link, i) => (
                 <li key={i}><a href="#" className="text-[14px] text-white/45 hover:text-gold transition-colors">{link}</a></li>
               ))}
             </ul>
@@ -48,7 +71,7 @@ export function Footer({ content, config }: Props) {
           <div>
             <p className="text-[11px] font-bold uppercase tracking-[1.5px] text-gold mb-4">Produtos</p>
             <ul className="space-y-2.5">
-              {(content.productLinks || ["Consórcio de Imóvel", "Consórcio de Veículo"]).map((link, i) => (
+              {(content.productLinks && content.productLinks.length > 0 ? content.productLinks : ["Consórcio de Imóvel", "Consórcio de Veículo"]).map((link, i) => (
                 <li key={i}><a href="#" className="text-[14px] text-white/45 hover:text-gold transition-colors">{link}</a></li>
               ))}
             </ul>
@@ -56,9 +79,34 @@ export function Footer({ content, config }: Props) {
           <div>
             <p className="text-[11px] font-bold uppercase tracking-[1.5px] text-gold mb-4">Contato</p>
             <ul className="space-y-2.5">
-              <li className="text-[14px] text-white/45">📱 {config.contact.whatsappDisplay}</li>
-              <li className="text-[14px] text-white/45">✉️ {config.contact.email}</li>
-              <li className="text-[14px] text-white/45">📍 {config.contact.region}</li>
+              <li className="text-[14px] text-white/45">
+                <a 
+                  href={buildWhatsAppUrl(config.contact.whatsapp, config.contact.whatsappMessage || "Olá, gostaria de mais informações.")} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="flex items-center gap-2 hover:text-gold transition-colors"
+                >
+                  <Phone className="w-3.5 h-3.5 text-gold/60" /> {config.contact.whatsappDisplay}
+                </a>
+              </li>
+              {config.contact.email && (
+                <li className="text-[14px] text-white/45 flex items-center gap-2">
+                  <Mail className="w-3.5 h-3.5 text-gold/60" /> {config.contact.email}
+                </li>
+              )}
+              {config.contact.cnpj && (
+                <li className="text-[14px] text-white/45 flex items-center gap-2">
+                  <FileText className="w-3.5 h-3.5 text-gold/60" /> {config.contact.cnpj}
+                </li>
+              )}
+              {config.contact.address && (
+                <li className="text-[14px] text-white/45 flex items-start gap-2">
+                  <MapPin className="w-3.5 h-3.5 text-gold/60 mt-1 shrink-0" /> <span>{config.contact.address}</span>
+                </li>
+              )}
+              <li className="text-[14px] text-white/45 flex items-center gap-2">
+                <MapPin className="w-3.5 h-3.5 text-gold/60" /> {config.contact.region}
+              </li>
             </ul>
           </div>
         </div>

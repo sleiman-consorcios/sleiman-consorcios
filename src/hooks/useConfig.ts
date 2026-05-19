@@ -1,99 +1,203 @@
-import { useEffect, useState, useCallback } from "react";
-import type { SiteConfig, Content, AdminConfig } from "@/types";
-import { getItem, setItem, removeItem, hasItem } from "@/utils/storage";
+import { useEffect, useState, useCallback, useRef, useLayoutEffect } from "react";
+import type { SiteConfig, Content, SectionKey } from "@/types";
+import { siteContentService } from "@/services/siteContentService";
+import { siteDataMapper } from "@/services/mappers/siteDataMapper";
+import { adminAuthService } from "@/services/adminAuthService";
 
-const KEY_SITE = "site-config";
-const KEY_CONTENT = "content";
+const KEY_SITE_DRAFT = "site-config-draft";
+const KEY_CONTENT_DRAFT = "content-draft";
 
-// Deep merge: defaults filled in for any missing keys, but local values win.
-// Arrays are NOT merged — local array fully replaces default (so user edits stick).
-function deepMerge<T>(defaults: T, local: T): T {
-  if (local === null || local === undefined) return defaults;
-  if (Array.isArray(defaults) || Array.isArray(local)) return local;
-  if (typeof defaults !== "object" || typeof local !== "object") return local;
-  const out: any = { ...defaults };
-  for (const key of Object.keys(local as any)) {
-    const dv = (defaults as any)?.[key];
-    const lv = (local as any)[key];
-    out[key] = dv !== undefined && typeof dv === "object" && !Array.isArray(dv)
-      ? deepMerge(dv, lv)
-      : lv;
-  }
-  return out;
+export interface SaveResult {
+  ok: true;
+  version?: number;
 }
 
-export function useConfig() {
-  const [siteConfig, setSiteConfig] = useState<SiteConfig | null>(null);
-  const [content, setContent] = useState<Content | null>(null);
-  const [adminConfig, setAdminConfig] = useState<AdminConfig | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [defaults, setDefaults] = useState<{ site: SiteConfig; content: Content } | null>(null);
-  const [hasLocal, setHasLocal] = useState(false);
+export interface SaveError {
+  ok: false;
+  error: string;
+}
 
-  useEffect(() => { load(); }, []);
+type LoadingState = "loading" | "ready" | "error";
 
-  async function load() {
+export interface UseConfigReturn {
+  siteConfig: SiteConfig | null;
+  content: Content | null;
+  publishedSiteConfig: SiteConfig | null;
+  publishedContent: Content | null;
+  loading: boolean;
+  state: LoadingState;
+  saving: boolean;
+  dirty: boolean;
+  saveError: string | null;
+  source: "supabase" | "fallback-json";
+  updateSiteConfig: (c: SiteConfig) => void;
+  updateContent: (c: Content) => void;
+  saveDraft: () => Promise<SaveResult | SaveError>;
+  publish: () => Promise<SaveResult | SaveError>;
+  discardDraft: () => Promise<void>;
+  reload: () => Promise<void>;
+}
+
+async function fetchJsonFallback<T>(url: string): Promise<T> {
+  const r = await fetch(`${url}?t=${Date.now()}`, { cache: "no-store" });
+  if (!r.ok) throw new Error(`Falha ao carregar ${url}`);
+  return (await r.json()) as T;
+}
+
+export function useConfig(isAdmin: boolean = false): UseConfigReturn {
+  const [publishedSiteConfig, setPublishedSiteConfig] = useState<SiteConfig | null>(() => {
+    if (isAdmin) return null;
     try {
-      // Migrate old localStorage data to IndexedDB (one-time)
-      const oldSite = localStorage.getItem("sleiman-site-config");
-      const oldContent = localStorage.getItem("sleiman-content");
-      if (oldSite) {
-        await setItem(KEY_SITE, JSON.parse(oldSite));
-        localStorage.removeItem("sleiman-site-config");
+      const saved = localStorage.getItem("site-config-cache");
+      return saved ? JSON.parse(saved) : null;
+    } catch { return null; }
+  });
+  const [publishedContent, setPublishedContent] = useState<Content | null>(() => {
+    if (isAdmin) return null;
+    try {
+      const saved = localStorage.getItem("content-cache");
+      return saved ? JSON.parse(saved) : null;
+    } catch { return null; }
+  });
+  const [siteConfig, setSiteConfigState] = useState<SiteConfig | null>(publishedSiteConfig);
+  const [content, setContentState] = useState<Content | null>(publishedContent);
+  const [state, setState] = useState<LoadingState>(siteConfig ? "ready" : "loading");
+  const [saving, setSaving] = useState(false);
+  const [dirty, setDirty] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [source, setSource] = useState<"supabase" | "fallback-json">("supabase");
+
+  const load = useCallback(async () => {
+    setState("loading");
+    try {
+      if (isAdmin) {
+        // Admin always loads draft from Supabase
+        const data = await siteContentService.getDraftSiteData();
+        if (data) {
+          const mapped = siteDataMapper.toFrontend(data.siteConfig, data.content);
+          setSiteConfigState(mapped.siteConfig);
+          setContentState(mapped.content);
+          setSource("supabase");
+        }
+      } else {
+        // Public page loads published from Supabase with JSON fallback
+        const data = await siteContentService.getPublishedSiteData();
+        if (data) {
+          const mapped = siteDataMapper.toFrontend(data.siteConfig, data.content);
+          setPublishedSiteConfig(mapped.siteConfig);
+          setPublishedContent(mapped.content);
+          setSiteConfigState(mapped.siteConfig);
+          setContentState(mapped.content);
+          setSource("supabase");
+          
+          if (!isAdmin) {
+            localStorage.setItem("site-config-cache", JSON.stringify(mapped.siteConfig));
+            localStorage.setItem("content-cache", JSON.stringify(mapped.content));
+          }
+        } else {
+          // Fallback to JSON
+          const [site, cont] = await Promise.all([
+            fetchJsonFallback<SiteConfig>("/site-config.json"),
+            fetchJsonFallback<Content>("/content.json"),
+          ]);
+          setPublishedSiteConfig(site);
+          setPublishedContent(cont);
+          setSiteConfigState(site);
+          setContentState(cont);
+          setSource("fallback-json");
+        }
       }
-      if (oldContent) {
-        await setItem(KEY_CONTENT, JSON.parse(oldContent));
-        localStorage.removeItem("sleiman-content");
-      }
-
-      const [site, cont, admin] = await Promise.all([
-        fetch("/site-config.json").then(r => r.json()),
-        fetch("/content.json").then(r => r.json()),
-        fetch("/admin-config.json").then(r => r.json()),
-      ]);
-      setDefaults({ site, content: cont });
-
-      const [localSite, localContent] = await Promise.all([
-        getItem<SiteConfig>(KEY_SITE),
-        getItem<Content>(KEY_CONTENT),
-      ]);
-
-      setSiteConfig(localSite ? deepMerge(site, localSite) : site);
-      setContent(localContent ? deepMerge(cont, localContent) : cont);
-      setAdminConfig(admin);
-      setHasLocal(localSite !== null || localContent !== null);
+      setState("ready");
     } catch (e) {
-      console.error("Failed to load config", e);
+      console.error("useConfig.load failed", e);
+      // Even in error, try JSON fallback for public
+      if (!isAdmin) {
+        try {
+          const [site, cont] = await Promise.all([
+            fetchJsonFallback<SiteConfig>("/site-config.json"),
+            fetchJsonFallback<Content>("/content.json"),
+          ]);
+          setSiteConfigState(site);
+          setContentState(cont);
+          setSource("fallback-json");
+          setState("ready");
+        } catch {
+          setState("error");
+        }
+      } else {
+        setState("error");
+      }
+    }
+  }, [isAdmin]);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  const updateSiteConfig = useCallback((c: SiteConfig) => {
+    setSiteConfigState(c);
+    setDirty(true);
+  }, []);
+
+  const updateContent = useCallback((c: Content) => {
+    setContentState(c);
+    setDirty(true);
+  }, []);
+
+  const saveDraft = useCallback(async (): Promise<SaveResult | SaveError> => {
+    if (!siteConfig || !content) return { ok: false, error: "Sem dados para salvar." };
+    setSaving(true);
+    setSaveError(null);
+    try {
+      const { config, content: dbContent } = siteDataMapper.toDatabase(siteConfig, content);
+      await Promise.all([
+        siteContentService.saveDraftContent(dbContent),
+        siteContentService.saveSiteConfig(config)
+      ]);
+      setDirty(false);
+      return { ok: true };
+    } catch (e: any) {
+      setSaveError(e.message);
+      return { ok: false, error: e.message };
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
-  }
+  }, [siteConfig, content]);
 
-  const updateSiteConfig = useCallback(async (c: SiteConfig) => {
-    setSiteConfig(c);
-    await setItem(KEY_SITE, c);
-    setHasLocal(true);
-  }, []);
-
-  const updateContent = useCallback(async (c: Content) => {
-    setContent(c);
-    await setItem(KEY_CONTENT, c);
-    setHasLocal(true);
-  }, []);
-
-  const resetToDefaults = useCallback(async () => {
-    await Promise.all([removeItem(KEY_SITE), removeItem(KEY_CONTENT)]);
-    if (defaults) {
-      setSiteConfig(defaults.site);
-      setContent(defaults.content);
+  const publish = useCallback(async (): Promise<SaveResult | SaveError> => {
+    setSaving(true);
+    setSaveError(null);
+    try {
+      await saveDraft();
+      await siteContentService.publishDraft();
+      setDirty(false);
+      return { ok: true };
+    } catch (e: any) {
+      setSaveError(e.message);
+      return { ok: false, error: e.message };
+    } finally {
+      setSaving(false);
     }
-    setHasLocal(false);
-  }, [defaults]);
+  }, [saveDraft]);
 
-  const hasLocalChanges = useCallback(() => hasLocal, [hasLocal]);
+  const discardDraft = useCallback(async () => {
+    setState("loading");
+    try {
+      await siteContentService.restorePublishedToDraft();
+      await load();
+      setDirty(false);
+    } catch (e) {
+      console.error("Discard failed", e);
+    } finally {
+      setState("ready");
+    }
+  }, [load]);
 
   return {
-    siteConfig, content, adminConfig, loading,
-    updateSiteConfig, updateContent, resetToDefaults, hasLocalChanges,
+    siteConfig, content, publishedSiteConfig, publishedContent,
+    loading: state === "loading",
+    state, saving, dirty, saveError, source,
+    updateSiteConfig, updateContent, saveDraft, publish, discardDraft,
+    reload: load,
   };
 }

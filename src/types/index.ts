@@ -1,10 +1,10 @@
-export type ThemeKey = "gold" | "blue" | "green" | "ice" | "pearl";
+export type ThemeKey = "gold" | "blue" | "green" | "ice" | "pearl" | "minimal";
 
 export interface SectionVisibility {
   hero: boolean; credibility: boolean; about: boolean; howItWorks: boolean;
   objectives: boolean; comparison: boolean; simulator: boolean; videos: boolean;
   testimonials: boolean; security: boolean; faq: boolean; finalCta: boolean;
-  promoBanner: boolean; cardapio: boolean;
+  promoBanner: boolean; cardapio: boolean; news: boolean;
 }
 
 export type SectionKey = keyof SectionVisibility;
@@ -12,16 +12,21 @@ export type SectionKey = keyof SectionVisibility;
 export const DEFAULT_SECTION_ORDER: SectionKey[] = [
   "hero", "promoBanner", "credibility", "about", "howItWorks",
   "objectives", "comparison", "cardapio", "simulator", "videos",
-  "testimonials", "security", "faq", "finalCta",
+  "news", "testimonials", "security", "faq", "finalCta",
 ];
 
 export interface SiteConfig {
-  brand: { name: string; logo: string; favicon: string };
-  contact: { whatsapp: string; whatsappDisplay: string; email: string; region: string };
+  brand: { name: string; logo: string; favicon: string; headerCta?: string; hideName?: boolean };
+  contact: { whatsapp: string; whatsappDisplay: string; whatsappMessage?: string; showWhatsappFloating?: boolean; email?: string; region: string; cnpj?: string; address?: string };
   social?: { instagram?: string; facebook?: string; tiktok?: string; youtube?: string; linkedin?: string };
   seo: { title: string; description: string; ogImage: string; ogUrl: string; canonical: string };
   scripts: { gtmId: string; metaPixelId: string; additionalHeadScripts: string; additionalBodyScripts: string };
   page: { active: boolean; unavailableTitle: string; unavailableMessage: string };
+  formFields?: {
+    showCPF: boolean;
+    showIncome: boolean;
+    showBirthDate: boolean;
+  };
   webhookUrl: string;
   theme: ThemeKey;
   sections: SectionVisibility;
@@ -35,6 +40,7 @@ export interface HeroContent {
   image: string; headline: string; subheadline: string;
   ctaPrimary: CTA; ctaSecondary: CTA; trustBadges: string[];
   eyebrow: string; trustText: string;
+  verticalAlign?: "top" | "middle" | "bottom";
 }
 
 export interface StatItem { icon: string; value: string; label: string }
@@ -72,45 +78,92 @@ export interface SimulatorPlan {
 export interface SimulatorCalc {
   adminRate: number;
   reductionFactor: number;
+  vehicleAdminRate?: number;
+  vehicleReductionFactor?: number;
   creditMin: number;
   creditMax: number;
   creditStep: number;
   creditDefault: number;
   vehicleMaxCredit: number;
+  vehicleMinCredit: number;
+  vehicleCreditStep: number;
   prazoOptions: { value: number; label: string }[];
+  vehiclePrazoOptions?: { value: number; label: string }[];
   prazoDefault: number;
   badges: string[];
   ctaText: string;
   privacyText: string;
+  installmentLabel?: string;
+  interestFreeLabel?: string;
+  disclaimerText?: string;
+  title?: string;
+  showAdminRate?: boolean;
   plans: SimulatorPlan[];
 }
 
 export interface SimulatorContent {
-  title: string; subtitle: string;
+  title: string; subtitle: string; tag?: string;
+
   objectives: string[]; creditRanges: string[]; installmentRanges: string[];
   calc: SimulatorCalc;
+  features?: { title: string; desc: string }[];
 }
 
 export interface VideoItem { title: string; description: string; thumbnail: string; url: string; tag: string }
-export interface VideosContent { title: string; subtitle: string; tag: string; items: VideoItem[] }
+export interface VideosContent { title: string; subtitle: string; tag: string; items: VideoItem[]; clickAction?: "youtube" | "modal" }
 
-export interface TestimonialItem { name: string; role: string; text: string; rating: number; image: string; city: string }
+export interface TestimonialItem { name: string; role: string; text: string; rating: number; image: string; city: string; showImage?: boolean }
 export interface TestimonialsContent { title: string; subtitle: string; tag: string; items: TestimonialItem[] }
 
 export interface SecurityPoint { icon: string; title: string; description: string }
-export interface SecurityContent { title: string; subtitle: string; points: SecurityPoint[] }
+export interface SecurityContent { title: string; subtitle: string; tag: string; points: SecurityPoint[] }
 
 export interface FAQItem { question: string; answer: string }
-export interface FAQContent { title: string; subtitle: string; items: FAQItem[] }
+export interface FAQContent { title: string; subtitle: string; tag: string; items: FAQItem[] }
 
-export interface FinalCtaContent { title: string; subtitle: string; ctaWhatsapp: string; ctaForm: string; tag: string; privacyText: string; objectives: string[]; creditOptions: string[] }
+export interface FinalCtaContent { title: string; subtitle: string; ctaWhatsapp: string; ctaForm: string; tag: string; privacyText: string; objectives: string[]; creditOptions: string[]; verticalAlign?: "top" | "middle" | "bottom" }
 export interface FooterContent { description: string; legal: string; privacyPolicy: string; terms: string; navLinks: string[]; productLinks: string[] }
 
-export interface PromoBannerSlide { image: string; alt: string }
-export interface PromoBannerContent { slides: PromoBannerSlide[]; ctaText: string; ctaHref: string; image?: string; alt?: string }
+export type PromoBannerMediaType = "image" | "video";
 
-export interface CardapioItem { image: string; title: string; installmentText: string }
+export interface PromoBannerSlide {
+  type?: PromoBannerMediaType;
+  image?: string; // manter compatibilidade com formato antigo
+  src?: string;
+  mobileSrc?: string;
+  webmSrc?: string;
+  poster?: string;
+  alt: string;
+}
+export interface PromoBannerContent { 
+  slides: PromoBannerSlide[]; 
+  ctaText: string; 
+  ctaHref: string; 
+  showCta?: boolean; 
+  image?: string; 
+  alt?: string; 
+  title?: string; 
+  subtitle?: string; 
+  countdownDate?: string; 
+  countdownText?: string; 
+  showCountdown?: boolean; 
+}
+
+export interface CardapioItem { image: string; title: string; installmentText: string | number; totalValue?: string | number }
 export interface CardapioContent { title: string; subtitle: string; items: CardapioItem[]; ctaText: string }
+
+export interface NewsItem {
+  image: string;
+  title: string;
+  url: string;
+  tag?: string;
+}
+
+export interface NewsContent {
+  title: string;
+  subtitle: string;
+  items: NewsItem[];
+}
 
 export interface Content {
   nav: NavItem[]; hero: HeroContent; credibility: CredibilityContent;
@@ -118,7 +171,7 @@ export interface Content {
   comparison: ComparisonContent; simulator: SimulatorContent; videos: VideosContent;
   testimonials: TestimonialsContent; security: SecurityContent; faq: FAQContent;
   finalCta: FinalCtaContent; footer: FooterContent; promoBanner: PromoBannerContent;
-  cardapio: CardapioContent;
+  cardapio: CardapioContent; news: NewsContent;
 }
 
-export interface AdminConfig { password: string; sessionDurationMinutes: number }
+export interface AdminConfig { sessionDurationMinutes: number }

@@ -1,8 +1,9 @@
 {
   "brand": {
     "name": "Sleiman Consórcios",
-    "logo": "",
-    "favicon": ""
+    "logo": "/logo.png",
+    "favicon": "/favicon.ico",
+    "hideName": false
   },
   "contact": {
     "whatsapp": "5511999999999",
@@ -18,9 +19,9 @@
     "linkedin": ""
   },
   "seo": {
-    "title": "Sleiman Consórcios — Planejamento Patrimonial Inteligente",
+    "title": "Sleiman Consórcios — Planejamento Patrimonial Inteligente!",
     "description": "Conquiste imóveis, veículos e forme patrimônio com estratégia, sem juros bancários. Consultoria personalizada com Farid Sleiman.",
-    "ogImage": "",
+    "ogImage": "/logo.png",
     "ogUrl": "https://sleimanconsorcio.com.br",
     "canonical": "https://sleimanconsorcio.com.br"
   },
@@ -54,8 +55,19 @@
     "cardapio": false
   },
   "sectionOrder": [
-    "hero", "promoBanner", "credibility", "about", "howItWorks",
-    "objectives", "comparison", "cardapio", "simulator", "videos",
-    "testimonials", "security", "faq", "finalCta"
+    "hero",
+    "promoBanner",
+    "credibility",
+    "about",
+    "howItWorks",
+    "objectives",
+    "comparison",
+    "cardapio",
+    "simulator",
+    "videos",
+    "testimonials",
+    "security",
+    "faq",
+    "finalCta"
   ]
 }
