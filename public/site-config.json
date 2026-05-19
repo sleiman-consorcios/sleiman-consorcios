@@ -1,0 +1,61 @@
+{
+  "brand": {
+    "name": "Sleiman Consórcios",
+    "logo": "",
+    "favicon": ""
+  },
+  "contact": {
+    "whatsapp": "5511999999999",
+    "whatsappDisplay": "(11) 99999-9999",
+    "email": "contato@sleimanconsorcio.com.br",
+    "region": "Grande São Paulo e Interior de SP"
+  },
+  "social": {
+    "instagram": "",
+    "facebook": "",
+    "tiktok": "",
+    "youtube": "",
+    "linkedin": ""
+  },
+  "seo": {
+    "title": "Sleiman Consórcios — Planejamento Patrimonial Inteligente",
+    "description": "Conquiste imóveis, veículos e forme patrimônio com estratégia, sem juros bancários. Consultoria personalizada com Farid Sleiman.",
+    "ogImage": "",
+    "ogUrl": "https://sleimanconsorcio.com.br",
+    "canonical": "https://sleimanconsorcio.com.br"
+  },
+  "scripts": {
+    "gtmId": "",
+    "metaPixelId": "",
+    "additionalHeadScripts": "",
+    "additionalBodyScripts": ""
+  },
+  "page": {
+    "active": true,
+    "unavailableTitle": "Página temporariamente indisponível",
+    "unavailableMessage": "Estamos preparando novidades para você. Em breve estaremos de volta com ainda mais opções para o seu planejamento patrimonial."
+  },
+  "webhookUrl": "",
+  "theme": "gold",
+  "sections": {
+    "hero": true,
+    "credibility": true,
+    "about": true,
+    "howItWorks": true,
+    "objectives": true,
+    "comparison": true,
+    "simulator": true,
+    "videos": true,
+    "testimonials": true,
+    "security": true,
+    "faq": true,
+    "finalCta": true,
+    "promoBanner": false,
+    "cardapio": false
+  },
+  "sectionOrder": [
+    "hero", "promoBanner", "credibility", "about", "howItWorks",
+    "objectives", "comparison", "cardapio", "simulator", "videos",
+    "testimonials", "security", "faq", "finalCta"
+  ]
+}
