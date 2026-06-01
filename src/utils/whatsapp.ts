@@ -1,9 +1,15 @@
 import { calculateAge } from "./phone";
 
-export function buildWhatsAppUrl(phone: string, message: string): string {
+export function buildWhatsAppUrl(phone: string, message: string, useGtmCallback: boolean = false): string {
   const cleanPhone = phone.replace(/\D/g, "");
-  // Use the standard API URL format as requested
-  return `https://api.whatsapp.com/send/?phone=${cleanPhone}&text=${encodeURIComponent(message)}&type=phone_number&app_absent=0`;
+  const baseUrl = `https://api.whatsapp.com/send/?phone=${cleanPhone}&text=${encodeURIComponent(message)}&type=phone_number&app_absent=0`;
+  
+  if (useGtmCallback && typeof (window as any).gtag_report_conversion === "function") {
+    // If GTM conversion tracker exists, we wrap the URL navigation
+    return `javascript:gtag_report_conversion('${baseUrl}')`;
+  }
+  
+  return baseUrl;
 }
 
 export function buildContactMessage(data: {

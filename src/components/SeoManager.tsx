@@ -42,6 +42,8 @@ export function SeoManager({ siteConfig, enabled = true }: { siteConfig: SiteCon
 
     // GTM
     if (scripts.gtmId) injectGtm(scripts.gtmId);
+    if (scripts.gtmScript1) injectRawScript("gtm-script-1", scripts.gtmScript1, "head");
+    if (scripts.gtmScript2) injectRawScript("gtm-script-2", scripts.gtmScript2, "head");
 
     // Meta Pixel
     if (scripts.metaPixelId) injectMetaPixel(scripts.metaPixelId);
@@ -145,4 +147,43 @@ function injectJsonLd(config: SiteConfig): void {
   s.type = "application/ld+json";
   s.text = JSON.stringify(jsonLd);
   document.head.appendChild(s);
+}
+
+function injectRawScript(id: string, content: string, target: "head" | "body"): void {
+  if (!content) return;
+  const existing = document.getElementById(id);
+  if (existing) existing.remove();
+
+  // Create a temporary container to parse the HTML string
+  const container = document.createElement("div");
+  container.innerHTML = content.trim();
+
+  // Extract and execute scripts manually because innerHTML doesn't execute them
+  const scripts = container.querySelectorAll("script");
+  scripts.forEach((oldScript, index) => {
+    const newScript = document.createElement("script");
+    Array.from(oldScript.attributes).forEach(attr => {
+      newScript.setAttribute(attr.name, attr.value);
+    });
+    newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+    newScript.id = `${id}-${index}`;
+    newScript.setAttribute("data-seo-managed", "1");
+    
+    if (target === "head") {
+      document.head.appendChild(newScript);
+    } else {
+      document.body.appendChild(newScript);
+    }
+  });
+
+  // Keep non-script elements if any (like noscript)
+  Array.from(container.childNodes).forEach(node => {
+    if (node.nodeName !== "SCRIPT") {
+      if (target === "head") {
+        document.head.appendChild(node);
+      } else {
+        document.body.appendChild(node);
+      }
+    }
+  });
 }

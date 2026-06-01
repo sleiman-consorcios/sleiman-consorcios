@@ -11,7 +11,12 @@ interface Props { nav: NavItem[]; config: SiteConfig }
  */
 export function safeScrollTo(href: string, whatsappUrl?: string) {
   if (href === "whatsapp" && whatsappUrl) {
-    window.open(whatsappUrl, "_blank");
+    if (whatsappUrl.startsWith("javascript:")) {
+      const code = whatsappUrl.replace("javascript:", "");
+      new Function(code)();
+    } else {
+      window.open(whatsappUrl, "_blank");
+    }
     return;
   }
   
@@ -35,7 +40,7 @@ export function safeScrollTo(href: string, whatsappUrl?: string) {
 
 export function Header({ nav, config }: Props) {
   const [open, setOpen] = useState(false);
-  const wpUrl = buildWhatsAppUrl(config.contact.whatsapp, config.contact.whatsappMessage || "Olá, vim pelo site e gostaria de mais informações.");
+  const wpUrl = buildWhatsAppUrl(config.contact.whatsapp, config.contact.whatsappMessage || "Olá, vim pelo site e gostaria de mais informações.", true);
 
   function handleNav(href: string) {
     setOpen(false);

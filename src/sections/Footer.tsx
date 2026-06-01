@@ -81,7 +81,7 @@ export function Footer({ content, config }: Props) {
             <ul className="space-y-2.5">
               <li className="text-[14px] text-white/45">
                 <a 
-                  href={buildWhatsAppUrl(config.contact.whatsapp, config.contact.whatsappMessage || "Olá, gostaria de mais informações.")} 
+                  href={buildWhatsAppUrl(config.contact.whatsapp, config.contact.whatsappMessage || "Olá, gostaria de mais informações.", true)} 
                   target="_blank" 
                   rel="noopener noreferrer" 
                   className="flex items-center gap-2 hover:text-gold transition-colors"

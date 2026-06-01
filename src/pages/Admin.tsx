@@ -282,6 +282,8 @@ function SiteConfigEditor({ config, onChange }: { config: SiteConfig; onChange: 
           <Field label="Meta Pixel ID" value={config.scripts.metaPixelId} onChange={v => u("scripts.metaPixelId", v)} />
           <TextareaField label="HeadScripts" value={config.scripts.additionalHeadScripts} onChange={v => u("scripts.additionalHeadScripts", v)} rows={2} />
           <TextareaField label="BodyScripts" value={config.scripts.additionalBodyScripts} onChange={v => u("scripts.additionalBodyScripts", v)} rows={2} />
+          <TextareaField label="Google Tag Manager - Script 1 (Config/Init)" value={config.scripts.gtmScript1 || ""} onChange={v => u("scripts.gtmScript1", v)} rows={4} hint="Cole aqui o primeiro script do GTM (gtag.js)" />
+          <TextareaField label="Google Tag Manager - Script 2 (Conversão)" value={config.scripts.gtmScript2 || ""} onChange={v => u("scripts.gtmScript2", v)} rows={4} hint="Cole aqui o segundo script (gtag_report_conversion)" />
         </div>
       </div>
       <div>
@@ -565,6 +567,11 @@ function AuthenticatedAdminPanel({ onLogout }: { onLogout: () => void }) {
             </Button>
           </div>
         </footer>
+        <div className="max-w-4xl mx-auto px-4 mt-8 pb-12 flex justify-end">
+          <span className="text-[10px] font-medium text-muted-foreground opacity-40 hover:opacity-100 transition-opacity uppercase tracking-widest">
+            V 1.0
+          </span>
+        </div>
       </div>
     </AdminContext.Provider>
   );

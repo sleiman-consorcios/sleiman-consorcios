@@ -159,7 +159,14 @@ export function SimulatorForm({ content, config, webhookUrl }: Props) {
       baseMessage: config.contact.whatsappMessage
     });
     
-    window.open(buildWhatsAppUrl(config.contact.whatsapp, msg), "_blank");
+    const whatsappUrl = buildWhatsAppUrl(config.contact.whatsapp, msg, true);
+    if (whatsappUrl.startsWith("javascript:")) {
+      // Execute the javascript code which includes the GTM callback
+      const code = whatsappUrl.replace("javascript:", "");
+      new Function(code)();
+    } else {
+      window.open(whatsappUrl, "_blank");
+    }
     setTimeout(() => { setLoading(false); setSent(true); }, 500);
   }
 

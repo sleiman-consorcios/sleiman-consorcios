@@ -20,7 +20,7 @@ export interface SiteConfig {
   contact: { whatsapp: string; whatsappDisplay: string; whatsappMessage?: string; showWhatsappFloating?: boolean; email?: string; region: string; cnpj?: string; address?: string };
   social?: { instagram?: string; facebook?: string; tiktok?: string; youtube?: string; linkedin?: string };
   seo: { title: string; description: string; ogImage: string; ogUrl: string; canonical: string };
-  scripts: { gtmId: string; metaPixelId: string; additionalHeadScripts: string; additionalBodyScripts: string };
+  scripts: { gtmId: string; metaPixelId: string; additionalHeadScripts: string; additionalBodyScripts: string; gtmScript1: string; gtmScript2: string };
   page: { active: boolean; unavailableTitle: string; unavailableMessage: string };
   formFields?: {
     showCPF: boolean;

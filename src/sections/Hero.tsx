@@ -182,7 +182,7 @@ export function Hero({ content, config, simulatorCalc }: Props) {
       baseMessage: config.contact.whatsappMessage
     });
     
-    window.open(buildWhatsAppUrl(config.contact.whatsapp, msg), "_blank");
+    window.open(buildWhatsAppUrl(config.contact.whatsapp, msg, true), "_blank");
     
     setTimeout(() => { 
       setLoading(false); 
@@ -244,7 +244,7 @@ export function Hero({ content, config, simulatorCalc }: Props) {
       baseMessage: config.contact.whatsappMessage
     });
     
-    window.open(buildWhatsAppUrl(config.contact.whatsapp, msg), "_blank");
+    window.open(buildWhatsAppUrl(config.contact.whatsapp, msg, true), "_blank");
     
     setTimeout(() => { 
       setLoading(false); 

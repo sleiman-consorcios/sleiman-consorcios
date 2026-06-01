@@ -107,7 +107,13 @@ export function FinalCta({ content, config }: Props) {
       baseMessage: config.contact.whatsappMessage
     });
 
-    window.open(buildWhatsAppUrl(config.contact.whatsapp, msg), "_blank");
+    const whatsappUrl = buildWhatsAppUrl(config.contact.whatsapp, msg, true);
+    if (whatsappUrl.startsWith("javascript:")) {
+      const code = whatsappUrl.replace("javascript:", "");
+      new Function(code)();
+    } else {
+      window.open(whatsappUrl, "_blank");
+    }
     setLoading(false);
   };
 

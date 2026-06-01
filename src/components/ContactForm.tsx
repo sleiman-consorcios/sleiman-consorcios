@@ -48,7 +48,7 @@ export function ContactForm({ whatsapp, objectives, creditRanges, ctaWhatsapp = 
     setIsVerified(true);
     setLoading(true);
     const msg = buildContactMessage({ name: form.name, phone: form.phone, objective: form.objective, creditRange: form.creditRange, message: form.message });
-    window.open(buildWhatsAppUrl(whatsapp, msg), "_blank");
+    window.open(buildWhatsAppUrl(whatsapp, msg, true), "_blank");
     setTimeout(() => { setLoading(false); setSent(true); }, 500);
   }
 
