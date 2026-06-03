@@ -17,7 +17,7 @@ export const DEFAULT_SECTION_ORDER: SectionKey[] = [
 
 export interface SiteConfig {
   brand: { name: string; logo: string; favicon: string; headerCta?: string; hideName?: boolean };
-  contact: { whatsapp: string; whatsappDisplay: string; whatsappMessage?: string; showWhatsappFloating?: boolean; email?: string; notificationEmail?: string; notificationEmailName?: string; region: string; cnpj?: string; address?: string };
+  contact: { whatsapp: string; whatsappDisplay: string; whatsappMessage?: string; showWhatsappFloating?: boolean; email?: string; region: string; cnpj?: string; address?: string };
   social?: { instagram?: string; facebook?: string; tiktok?: string; youtube?: string; linkedin?: string };
   seo: { title: string; description: string; ogImage: string; ogUrl: string; canonical: string };
   scripts: { gtmId: string; metaPixelId: string; additionalHeadScripts: string; additionalBodyScripts: string; gtmScript1: string; gtmScript2: string };

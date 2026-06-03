@@ -65,62 +65,6 @@ export type Database = {
         }
         Relationships: []
       }
-      email_logs: {
-        Row: {
-          created_at: string | null
-          error_message: string | null
-          id: string
-          lead_id: string | null
-          recipient: string
-          status: string
-        }
-        Insert: {
-          created_at?: string | null
-          error_message?: string | null
-          id?: string
-          lead_id?: string | null
-          recipient: string
-          status: string
-        }
-        Update: {
-          created_at?: string | null
-          error_message?: string | null
-          id?: string
-          lead_id?: string | null
-          recipient?: string
-          status?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "email_logs_lead_id_fkey"
-            columns: ["lead_id"]
-            isOneToOne: false
-            referencedRelation: "leads"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      internal_settings: {
-        Row: {
-          created_at: string | null
-          key: string
-          updated_at: string | null
-          value: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          key: string
-          updated_at?: string | null
-          value?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          key?: string
-          updated_at?: string | null
-          value?: string | null
-        }
-        Relationships: []
-      }
       leads: {
         Row: {
           birth_date: string | null
@@ -134,12 +78,10 @@ export type Database = {
           installment: string | null
           months: string | null
           name: string
-          notification_log: Json | null
           objective: string | null
           phone: string
           source: string | null
           status: string | null
-          traffic_source: string | null
           updated_at: string
           urgency: string | null
         }
@@ -155,12 +97,10 @@ export type Database = {
           installment?: string | null
           months?: string | null
           name: string
-          notification_log?: Json | null
           objective?: string | null
           phone: string
           source?: string | null
           status?: string | null
-          traffic_source?: string | null
           updated_at?: string
           urgency?: string | null
         }
@@ -176,12 +116,10 @@ export type Database = {
           installment?: string | null
           months?: string | null
           name?: string
-          notification_log?: Json | null
           objective?: string | null
           phone?: string
           source?: string | null
           status?: string | null
-          traffic_source?: string | null
           updated_at?: string
           urgency?: string | null
         }

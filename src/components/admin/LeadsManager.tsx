@@ -8,8 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { 
   Loader2, Trash2, RefreshCw, 
-  Search, Calendar, FileDown, MessageCircle,
-  Mail, MailWarning, MailCheck
+  Search, Calendar, FileDown, MessageCircle
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -65,7 +64,7 @@ export function LeadsManager() {
       }
 
       if (searchTerm) {
-        query = query.or(`name.ilike.%${searchTerm}%,phone.ilike.%${searchTerm}%,traffic_source.ilike.%${searchTerm}%`);
+        query = query.or(`name.ilike.%${searchTerm}%,phone.ilike.%${searchTerm}%`);
       }
 
       const { data, error } = await query;
@@ -170,32 +169,6 @@ export function LeadsManager() {
     }
   };
 
-  const handleCheckEmailStatus = async (leadId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from("email_logs")
-        .select("*")
-        .eq("lead_id", leadId)
-        .order("created_at", { ascending: false })
-        .limit(1);
-
-      if (error) throw error;
-
-      if (data && data.length > 0) {
-        const log = data[0];
-        if (log.status === "success") {
-          toast.success(`E-mail enviado com sucesso para ${log.recipient} em ${format(new Date(log.created_at), "dd/MM/yy HH:mm")}`);
-        } else {
-          toast.error(`Falha no e-mail: ${log.error_message || "Erro desconhecido"}`);
-        }
-      } else {
-        toast.info("Nenhum log de e-mail encontrado para este lead ainda.");
-      }
-    } catch (error: any) {
-      toast.error("Erro ao verificar status: " + error.message);
-    }
-  };
-
   const exportToPDF = () => {
     if (leads.length === 0) {
       toast.error("Não há dados para exportar");
@@ -235,13 +208,12 @@ export function LeadsManager() {
           lead.form_type === "hero_modal" ? "Modal Hero" : 
           lead.form_type === "main_calculator" ? "Calculadora" : 
           lead.form_type === "footer_contact" ? "Rodapé" : 
-          (lead.source === "hero_simulator" ? "Modal Hero" : lead.source || "Geral"),
-          lead.traffic_source || "Direto"
+          (lead.source === "hero_simulator" ? "Modal Hero" : lead.source || "Geral")
         ];
       });
 
       autoTable(doc, {
-        head: [["Data", "Nome", "WhatsApp", "CPF", "Nasc.", "Objetivo", "Crédito", "Renda", "Urg./Lance", "Origem", "Tráfego"]],
+        head: [["Data", "Nome", "WhatsApp", "CPF", "Nasc.", "Objetivo", "Crédito", "Renda", "Urg./Lance", "Origem"]],
         body: tableData,
         startY: 40,
         styles: { fontSize: 7 }, // Reduced font size to fit more columns
@@ -360,7 +332,6 @@ export function LeadsManager() {
                 <TableHead className="font-semibold text-slate-600">Cliente</TableHead>
                 <TableHead className="font-semibold text-slate-600 hidden md:table-cell">Simulação</TableHead>
                 <TableHead className="font-semibold text-slate-600 hidden sm:table-cell">Origem</TableHead>
-                <TableHead className="font-semibold text-slate-600 hidden lg:table-cell">Tráfego</TableHead>
                 <TableHead className="font-semibold text-slate-600">Status</TableHead>
                 <TableHead className="text-right font-semibold text-slate-600">Ações</TableHead>
               </TableRow>
@@ -401,15 +372,7 @@ export function LeadsManager() {
                       <div className="text-xs font-medium text-slate-400 flex items-center gap-1">
                         <MessageCircle className="w-3 h-3" /> {lead.phone}
                       </div>
-                        <div className="text-[10px] text-slate-400 font-medium flex gap-2 flex-wrap items-center">
-                          {lead.traffic_source && (
-                            <>
-                              <Badge variant="secondary" className="text-[8px] h-4 px-1.5 py-0 bg-slate-100 text-slate-500 border-none lg:hidden">
-                                {lead.traffic_source}
-                              </Badge>
-                              <span className="text-slate-200 lg:hidden">|</span>
-                            </>
-                          )}
+                        <div className="text-[10px] text-slate-400 font-medium flex gap-2 flex-wrap">
                           {(lead as any).cpf && <span>CPF: {(lead as any).cpf}</span>}
                           {(lead as any).birth_date && (
                             <>
@@ -444,20 +407,6 @@ export function LeadsManager() {
                          (lead.source === "hero_simulator" ? "Modal Hero" : lead.source || "Geral")}
                       </Badge>
                     </TableCell>
-                    <TableCell className="hidden lg:table-cell">
-                      {lead.traffic_source ? (
-                        <Badge className={`text-[9px] uppercase tracking-wider font-bold py-0.5 ${
-                          lead.traffic_source === 'google' ? 'bg-blue-100 text-blue-700 hover:bg-blue-100 border-none' :
-                          ['meta', 'facebook', 'instagram'].includes(lead.traffic_source.toLowerCase()) ? 'bg-purple-100 text-purple-700 hover:bg-purple-100 border-none' :
-                          lead.traffic_source === 'organic' ? 'bg-green-100 text-green-700 hover:bg-green-100 border-none' :
-                          'bg-slate-100 text-slate-700 hover:bg-slate-100 border-none'
-                        }`}>
-                          {lead.traffic_source}
-                        </Badge>
-                      ) : (
-                        <span className="text-[10px] text-slate-400 font-medium italic">Direto</span>
-                      )}
-                    </TableCell>
                     <TableCell>
                       {getStatusBadge(lead.status)}
                     </TableCell>
@@ -466,17 +415,8 @@ export function LeadsManager() {
                         <Button 
                           variant="ghost" 
                           size="icon" 
-                          className="h-9 w-9 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-xl transition-all active:scale-90"
-                          title="Verificar status do e-mail"
-                          onClick={() => handleCheckEmailStatus(lead.id)}
-                        >
-                          <Mail className="w-4 h-4" />
-                        </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
                           className="h-9 w-9 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-xl transition-all active:scale-90"
-                          title="Tentar reenviar via WhatsApp"
+                          title="Tentar reenviar"
                           onClick={() => retryWhatsApp(lead)}
                         >
                           <MessageCircle className="w-4 h-4" />

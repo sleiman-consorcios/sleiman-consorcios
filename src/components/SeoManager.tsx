@@ -156,18 +156,7 @@ function injectRawScript(id: string, content: string, target: "head" | "body"): 
 
   // Create a temporary container to parse the HTML string
   const container = document.createElement("div");
-  // Decode common HTML entities that might be escaped
-  const decodedContent = content.trim()
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&amp;/g, '&')
-    // Also remove potential extra backslashes from database escaping
-    .replace(/\\"/g, '"')
-    .replace(/\\'/g, "'");
-
-  container.innerHTML = decodedContent;
+  container.innerHTML = content.trim();
 
   // Extract and execute scripts manually because innerHTML doesn't execute them
   const scripts = container.querySelectorAll("script");
@@ -176,7 +165,7 @@ function injectRawScript(id: string, content: string, target: "head" | "body"): 
     Array.from(oldScript.attributes).forEach(attr => {
       newScript.setAttribute(attr.name, attr.value);
     });
-    newScript.textContent = oldScript.innerHTML;
+    newScript.appendChild(document.createTextNode(oldScript.innerHTML));
     newScript.id = `${id}-${index}`;
     newScript.setAttribute("data-seo-managed", "1");
     
@@ -190,11 +179,10 @@ function injectRawScript(id: string, content: string, target: "head" | "body"): 
   // Keep non-script elements if any (like noscript)
   Array.from(container.childNodes).forEach(node => {
     if (node.nodeName !== "SCRIPT") {
-      const clone = node.cloneNode(true);
       if (target === "head") {
-        document.head.appendChild(clone);
+        document.head.appendChild(node);
       } else {
-        document.body.appendChild(clone);
+        document.body.appendChild(node);
       }
     }
   });

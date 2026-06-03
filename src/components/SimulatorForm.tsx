@@ -4,10 +4,9 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { formatPhone, isValidPhone, isWhatsApp, formatCPF, isValidCPF, formatBirthDate, isValidBirthDate } from "@/utils/phone";
-import { buildWhatsAppUrl, buildContactMessage, handleWhatsAppRedirect } from "@/utils/whatsapp";
+import { buildWhatsAppUrl, buildContactMessage } from "@/utils/whatsapp";
 import { sendLeadWebhook } from "@/utils/leadWebhook";
 import { supabase } from "@/integrations/supabase/client";
-import { getTrafficSource } from "@/utils/tracking";
 import { MessageCircle, Loader2, Info, Check, CheckCircle2, UserCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { SimulatorContent, SiteConfig } from "@/types";
@@ -140,7 +139,6 @@ export function SimulatorForm({ content, config, webhookUrl }: Props) {
         has_lance: form.hasLance,
         source: "main_simulator",
         form_type: "main_calculator",
-        traffic_source: getTrafficSource(),
         status: "sent"
       }]);
     } catch (err) {
@@ -161,7 +159,14 @@ export function SimulatorForm({ content, config, webhookUrl }: Props) {
       baseMessage: config.contact.whatsappMessage
     });
     
-    handleWhatsAppRedirect(config.contact.whatsapp, msg);
+    const whatsappUrl = buildWhatsAppUrl(config.contact.whatsapp, msg, true);
+    if (whatsappUrl.startsWith("javascript:")) {
+      // Execute the javascript code which includes the GTM callback
+      const code = whatsappUrl.replace("javascript:", "");
+      new Function(code)();
+    } else {
+      window.open(whatsappUrl, "_blank");
+    }
     setTimeout(() => { setLoading(false); setSent(true); }, 500);
   }
 
