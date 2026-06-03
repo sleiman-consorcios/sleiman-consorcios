@@ -245,7 +245,9 @@ function SiteConfigEditor({ config, onChange }: { config: SiteConfig; onChange: 
         <div className="space-y-3">
           <Field label="WhatsApp (só números)" value={config.contact.whatsapp} onChange={v => u("contact.whatsapp", v)} />
           <Field label="WhatsApp (exibição)" value={config.contact.whatsappDisplay} onChange={v => u("contact.whatsappDisplay", v)} />
-          <Field label="E-mail (opcional)" value={config.contact.email || ""} onChange={v => u("contact.email", v)} />
+          <Field label="E-mail (exibição)" value={config.contact.email || ""} onChange={v => u("contact.email", v)} />
+          <Field label="E-mail de Notificação" value={config.contact.notificationEmail ?? ""} onChange={v => u("contact.notificationEmail", v)} placeholder="sleimanconsorcios@gmail.com" hint="E-mail que receberá os dados dos novos leads." />
+          <Field label="Nome do Remetente" value={config.contact.notificationEmailName ?? ""} onChange={v => u("contact.notificationEmailName", v)} placeholder="Sleiman Consórcios" hint="Nome que aparecerá como remetente no e-mail de notificação." />
           <Field label="CNPJ (opcional)" value={config.contact.cnpj || ""} onChange={v => u("contact.cnpj", v)} />
           <Field label="Endereço (opcional)" value={config.contact.address || ""} onChange={v => u("contact.address", v)} />
           <TextareaField label="Mensagem padrão WhatsApp" value={config.contact.whatsappMessage || ""} onChange={v => u("contact.whatsappMessage", v)} hint="Mensagem que o cliente envia ao clicar nos botões de contato." />

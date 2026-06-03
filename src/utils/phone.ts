@@ -39,6 +39,7 @@ export function isValidCPF(value: string): boolean {
   if (cpf.length !== 11) return false;
   if (/^(\d)\1{10}$/.test(cpf)) return false;
 
+  // Let's be less strict for testing if needed, but this is a standard validation
   let sum = 0;
   for (let i = 0; i < 9; i++) sum += parseInt(cpf.charAt(i)) * (10 - i);
   let rev = 11 - (sum % 11);

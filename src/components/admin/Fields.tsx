@@ -14,13 +14,15 @@ export function Field({
   value, 
   onChange, 
   className, 
-  hint 
+  hint,
+  placeholder
 }: { 
   label: string; 
   value: string; 
   onChange: (v: string) => void; 
   className?: string;
   hint?: string;
+  placeholder?: string;
 }) {
   return (
     <div className={className}>
@@ -42,6 +44,7 @@ export function Field({
       <Input 
         value={value} 
         onChange={e => onChange(e.target.value)} 
+        placeholder={placeholder}
         className="text-sm bg-slate-50/50 border-slate-200 focus:bg-white focus:ring-gold/20 focus:border-gold transition-all h-10 rounded-lg" 
       />
     </div>

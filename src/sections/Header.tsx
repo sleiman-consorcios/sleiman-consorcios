@@ -40,7 +40,7 @@ export function safeScrollTo(href: string, whatsappUrl?: string) {
 
 export function Header({ nav, config }: Props) {
   const [open, setOpen] = useState(false);
-  const wpUrl = buildWhatsAppUrl(config.contact.whatsapp, config.contact.whatsappMessage || "Olá, vim pelo site e gostaria de mais informações.", true);
+  const wpUrl = buildWhatsAppUrl(config.contact.whatsapp, config.contact.whatsappMessage || "Olá, vim pelo site e gostaria de mais informações.");
 
   function handleNav(href: string) {
     setOpen(false);
