@@ -2,11 +2,12 @@ import { useState, useCallback } from "react";
 import { MessageCircle, Check, ChevronsUpDown, Loader2, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AnimatedSection } from "@/components/AnimatedSection";
-import { buildWhatsAppUrl, buildContactMessage } from "@/utils/whatsapp";
+import { buildWhatsAppUrl, buildContactMessage, handleWhatsAppRedirect } from "@/utils/whatsapp";
 import { safeScrollTo } from "./Header";
 import { Input } from "@/components/ui/input";
 import { formatPhone, isValidPhone, isWhatsApp, formatCPF, isValidCPF, formatBirthDate, isValidBirthDate } from "@/utils/phone";
 import { sendLeadWebhook } from "@/utils/leadWebhook";
+import { getTrafficSource } from "@/utils/tracking";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Command,
@@ -160,6 +161,7 @@ export function Hero({ content, config, simulatorCalc }: Props) {
         urgency: urgencyLabel,
         source: "hero_simulator",
         form_type: "hero_modal",
+        traffic_source: getTrafficSource(),
         status: "sent"
       }]);
     } catch (err) {
@@ -182,7 +184,7 @@ export function Hero({ content, config, simulatorCalc }: Props) {
       baseMessage: config.contact.whatsappMessage
     });
     
-    window.open(buildWhatsAppUrl(config.contact.whatsapp, msg, true), "_blank");
+    handleWhatsAppRedirect(config.contact.whatsapp, msg);
     
     setTimeout(() => { 
       setLoading(false); 
@@ -223,6 +225,7 @@ export function Hero({ content, config, simulatorCalc }: Props) {
       installment: fmt(parcela),
       urgency: urgencyLabel,
       source: "hero_simulator",
+      traffic_source: getTrafficSource(),
       status: "sent"
     }]).then(({error}) => {
        if(error) console.error("Erro ao salvar lead:", error);
@@ -244,7 +247,7 @@ export function Hero({ content, config, simulatorCalc }: Props) {
       baseMessage: config.contact.whatsappMessage
     });
     
-    window.open(buildWhatsAppUrl(config.contact.whatsapp, msg, true), "_blank");
+    handleWhatsAppRedirect(config.contact.whatsapp, msg);
     
     setTimeout(() => { 
       setLoading(false); 

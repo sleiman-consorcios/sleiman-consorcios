@@ -4,8 +4,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatPhone, isValidPhone, isWhatsApp } from "@/utils/phone";
-import { buildWhatsAppUrl, buildContactMessage } from "@/utils/whatsapp";
+import { buildWhatsAppUrl, buildContactMessage, handleWhatsAppRedirect } from "@/utils/whatsapp";
 import { MessageCircle, Send, Loader2, CheckCircle2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { getTrafficSource } from "@/utils/tracking";
+import { toast } from "sonner";
 
 interface Props {
   whatsapp: string;
@@ -47,9 +50,36 @@ export function ContactForm({ whatsapp, objectives, creditRanges, ctaWhatsapp = 
 
     setIsVerified(true);
     setLoading(true);
-    const msg = buildContactMessage({ name: form.name, phone: form.phone, objective: form.objective, creditRange: form.creditRange, message: form.message });
-    window.open(buildWhatsAppUrl(whatsapp, msg, true), "_blank");
-    setTimeout(() => { setLoading(false); setSent(true); }, 500);
+
+    try {
+      // Save lead to database
+      await supabase.from("leads").insert([{
+        name: form.name,
+        phone: form.phone,
+        objective: form.objective,
+        credit: form.creditRange,
+        message: form.message,
+        form_type: "footer_contact",
+        traffic_source: getTrafficSource(),
+        status: "sent"
+      }]);
+
+      const msg = buildContactMessage({ 
+        name: form.name, 
+        phone: form.phone, 
+        objective: form.objective, 
+        creditRange: form.creditRange, 
+        message: form.message 
+      });
+      
+      handleWhatsAppRedirect(whatsapp, msg);
+      setSent(true);
+    } catch (error) {
+      console.error("Error saving lead:", error);
+      toast.error("Erro ao processar sua solicitação.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   if (sent) return (

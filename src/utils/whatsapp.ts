@@ -1,15 +1,29 @@
 import { calculateAge } from "./phone";
 
-export function buildWhatsAppUrl(phone: string, message: string, useGtmCallback: boolean = false): string {
+export function buildWhatsAppUrl(phone: string, message: string): string {
   const cleanPhone = phone.replace(/\D/g, "");
-  const baseUrl = `https://api.whatsapp.com/send/?phone=${cleanPhone}&text=${encodeURIComponent(message)}&type=phone_number&app_absent=0`;
+  // Using api.whatsapp.com/send as it is the official direct link format
+  // which is less likely to be blocked when used in a direct link
+  return `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(message)}`;
+}
+
+export function handleWhatsAppRedirect(phone: string, message: string) {
+  const cleanPhone = phone.replace(/\D/g, "");
+  // Using api.whatsapp.com/send as requested for a better experience with WhatsApp Web/Desktop
+  const baseUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(message)}`;
   
-  if (useGtmCallback && typeof (window as any).gtag_report_conversion === "function") {
-    // If GTM conversion tracker exists, we wrap the URL navigation
-    return `javascript:gtag_report_conversion('${baseUrl}')`;
+  if (typeof (window as any).gtag_report_conversion === "function") {
+    (window as any).gtag_report_conversion(baseUrl);
+  } else {
+    // We attempt to use a direct window location change if window.open is restricted
+    // or if we want to ensure the browser doesn't block the popup.
+    // For WhatsApp, sometimes a direct link works better than window.open in some environments.
+    const newWindow = window.open(baseUrl, '_blank');
+    if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+      // Fallback if popup is blocked
+      window.location.href = baseUrl;
+    }
   }
-  
-  return baseUrl;
 }
 
 export function buildContactMessage(data: {
