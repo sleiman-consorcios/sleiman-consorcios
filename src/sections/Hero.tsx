@@ -148,7 +148,7 @@ export function Hero({ content, config, simulatorCalc }: Props) {
 
     // Salvar no banco de dados para auditoria
     try {
-      await supabase.from("leads").insert([{
+      const { data: lead, error } = await supabase.from("leads").insert([{
         name: customerName,
         phone: customerPhone,
         cpf: customerCPF,
@@ -163,7 +163,14 @@ export function Hero({ content, config, simulatorCalc }: Props) {
         form_type: "hero_modal",
         traffic_source: getTrafficSource(),
         status: "sent"
-      }]);
+      }]).select().single();
+
+      if (!error && lead) {
+        // Trigger notification edge function manually
+        await supabase.functions.invoke("send-lead-notification", {
+          body: { record: lead }
+        });
+      }
     } catch (err) {
       console.error("Erro ao salvar lead:", err);
     }
@@ -227,8 +234,15 @@ export function Hero({ content, config, simulatorCalc }: Props) {
       source: "hero_simulator",
       traffic_source: getTrafficSource(),
       status: "sent"
-    }]).then(({error}) => {
-       if(error) console.error("Erro ao salvar lead:", error);
+    }]).select().single().then(({data: lead, error}) => {
+       if(error) {
+         console.error("Erro ao salvar lead:", error);
+       } else if (lead) {
+         // Trigger notification edge function manually
+         supabase.functions.invoke("send-lead-notification", {
+           body: { record: lead }
+         });
+       }
     });
 
     sendLeadWebhook(config.webhookUrl, payload);

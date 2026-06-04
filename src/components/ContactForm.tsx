@@ -53,7 +53,7 @@ export function ContactForm({ whatsapp, objectives, creditRanges, ctaWhatsapp = 
 
     try {
       // Save lead to database
-      await supabase.from("leads").insert([{
+      const { data: lead, error } = await supabase.from("leads").insert([{
         name: form.name,
         phone: form.phone,
         objective: form.objective,
@@ -62,7 +62,14 @@ export function ContactForm({ whatsapp, objectives, creditRanges, ctaWhatsapp = 
         form_type: "footer_contact",
         traffic_source: getTrafficSource(),
         status: "sent"
-      }]);
+      }]).select().single();
+
+      if (!error && lead) {
+        // Trigger notification edge function manually
+        await supabase.functions.invoke("send-lead-notification", {
+          body: { record: lead }
+        });
+      }
 
       const msg = buildContactMessage({ 
         name: form.name, 

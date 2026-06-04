@@ -127,7 +127,7 @@ export function SimulatorForm({ content, config, webhookUrl }: Props) {
     
     // Salvar no banco de dados para auditoria
     try {
-      await supabase.from("leads").insert([{
+      const { data: lead, error } = await supabase.from("leads").insert([{
         name: form.name,
         phone: form.phone,
         cpf: form.cpf,
@@ -142,7 +142,14 @@ export function SimulatorForm({ content, config, webhookUrl }: Props) {
         form_type: "main_calculator",
         traffic_source: getTrafficSource(),
         status: "sent"
-      }]);
+      }]).select().single();
+
+      if (!error && lead) {
+        // Trigger notification edge function manually
+        await supabase.functions.invoke("send-lead-notification", {
+          body: { record: lead }
+        });
+      }
     } catch (err) {
       console.error("Erro ao salvar lead:", err);
     }

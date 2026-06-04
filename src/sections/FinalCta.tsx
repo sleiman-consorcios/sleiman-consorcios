@@ -77,7 +77,7 @@ export function FinalCta({ content, config }: Props) {
 
     // Salvar no banco de dados para auditoria
     try {
-      await supabase.from("leads").insert([{
+      const { data: lead, error } = await supabase.from("leads").insert([{
         name: formData.name,
         phone: formData.phone,
         cpf: formData.cpf,
@@ -90,7 +90,14 @@ export function FinalCta({ content, config }: Props) {
         form_type: "footer_contact",
         traffic_source: getTrafficSource(),
         status: "sent"
-      }]);
+      }]).select().single();
+
+      if (!error && lead) {
+        // Trigger notification edge function manually
+        await supabase.functions.invoke("send-lead-notification", {
+          body: { record: lead }
+        });
+      }
     } catch (err) {
       console.error("Erro ao salvar lead:", err);
     }
