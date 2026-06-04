@@ -90,13 +90,20 @@ export function FinalCta({ content, config }: Props) {
         form_type: "footer_contact",
         traffic_source: getTrafficSource(),
         status: "sent"
-      }]).select().single();
+      }]);
 
-      if (!error && lead) {
+      if (error) {
+        console.error("Erro ao salvar lead no banco:", error);
+      } else {
+        console.log("Lead registrado");
         // Trigger notification edge function manually
-        await supabase.functions.invoke("send-lead-notification", {
-          body: { record: lead }
-        });
+        try {
+          await supabase.functions.invoke("send-lead-notification", {
+            body: { record: payload }
+          });
+        } catch (fnError) {
+          console.error("Erro ao chamar função de notificação:", fnError);
+        }
       }
     } catch (err) {
       console.error("Erro ao salvar lead:", err);

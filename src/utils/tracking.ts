@@ -13,18 +13,18 @@ export function detectTrafficSource(): TrafficSource {
 
   // 1. Check UTMs first (most reliable)
   if (utmSource) {
-    if (utmSource.includes("google")) return "google";
-    if (utmSource.includes("facebook") || utmSource.includes("instagram") || utmSource.includes("meta")) return "meta";
-    if (utmMedium === "cpc" || utmMedium === "ads") return "ads";
+    if (utmSource.includes("google") || utmSource.includes("gclid")) return "google";
+    if (utmSource.includes("facebook") || utmSource.includes("instagram") || utmSource.includes("meta") || utmSource.includes("ig")) return "meta";
+    if (utmMedium === "cpc" || utmMedium === "ads" || utmMedium === "paid") return "google";
     return "other";
   }
 
   // 2. Check Referrer
   if (referrer) {
     if (referrer.includes("google.com")) return "google";
-    if (referrer.includes("facebook.com") || referrer.includes("instagram.com") || referrer.includes("t.co")) return "meta";
+    if (referrer.includes("facebook.com") || referrer.includes("instagram.com") || referrer.includes("t.co") || referrer.includes("l.instagram.com")) return "meta";
     if (referrer.includes("bing.com") || referrer.includes("yahoo.com")) return "organic";
-    return "organic"; // If there is a referrer but not identified, assume organic
+    return "organic"; 
   }
 
   // 3. Default to direct

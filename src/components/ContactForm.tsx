@@ -62,13 +62,29 @@ export function ContactForm({ whatsapp, objectives, creditRanges, ctaWhatsapp = 
         form_type: "footer_contact",
         traffic_source: getTrafficSource(),
         status: "sent"
-      }]).select().single();
+      }]);
 
-      if (!error && lead) {
+      if (error) {
+        console.error("Erro ao salvar lead no banco:", error);
+        // Mesmo com erro no banco, tentamos seguir com o WhatsApp
+      } else {
+        console.log("Lead registrado");
         // Trigger notification edge function manually
-        await supabase.functions.invoke("send-lead-notification", {
-          body: { record: lead }
-        });
+        try {
+          await supabase.functions.invoke("send-lead-notification", {
+            body: { 
+              record: { 
+                name: form.name,
+                phone: form.phone,
+                objective: form.objective,
+                credit: form.creditRange,
+                message: form.message
+              } 
+            }
+          });
+        } catch (fnError) {
+          console.error("Erro ao chamar função de notificação:", fnError);
+        }
       }
 
       const msg = buildContactMessage({ 

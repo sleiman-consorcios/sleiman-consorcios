@@ -163,12 +163,12 @@ export function Hero({ content, config, simulatorCalc }: Props) {
         form_type: "hero_modal",
         traffic_source: getTrafficSource(),
         status: "sent"
-      }]).select().single();
+      }]);
 
-      if (!error && lead) {
+      if (!error) {
         // Trigger notification edge function manually
         await supabase.functions.invoke("send-lead-notification", {
-          body: { record: lead }
+          body: { record: payload }
         });
       }
     } catch (err) {
@@ -234,13 +234,13 @@ export function Hero({ content, config, simulatorCalc }: Props) {
       source: "hero_simulator",
       traffic_source: getTrafficSource(),
       status: "sent"
-    }]).select().single().then(({data: lead, error}) => {
+    }]).then(({data: lead, error}) => {
        if(error) {
          console.error("Erro ao salvar lead:", error);
-       } else if (lead) {
+       } else {
          // Trigger notification edge function manually
          supabase.functions.invoke("send-lead-notification", {
-           body: { record: lead }
+           body: { record: payload }
          });
        }
     });

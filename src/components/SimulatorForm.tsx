@@ -142,13 +142,20 @@ export function SimulatorForm({ content, config, webhookUrl }: Props) {
         form_type: "main_calculator",
         traffic_source: getTrafficSource(),
         status: "sent"
-      }]).select().single();
+      }]);
 
-      if (!error && lead) {
+      if (error) {
+        console.error("Erro ao salvar lead no banco:", error);
+      } else {
+        console.log("Lead registrado");
         // Trigger notification edge function manually
-        await supabase.functions.invoke("send-lead-notification", {
-          body: { record: lead }
-        });
+        try {
+          await supabase.functions.invoke("send-lead-notification", {
+            body: { record: { ...payload, id: 'client-side-generated' } }
+          });
+        } catch (fnError) {
+          console.error("Erro ao chamar função de notificação:", fnError);
+        }
       }
     } catch (err) {
       console.error("Erro ao salvar lead:", err);
