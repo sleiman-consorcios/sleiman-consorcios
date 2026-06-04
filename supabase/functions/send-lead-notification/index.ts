@@ -85,7 +85,7 @@ serve(async (req) => {
         Authorization: `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: `${notificationEmailName} <onboarding@resend.dev>`,
+        from: notificationEmail.includes('@sleimanconsorcios.com.br') ? `Sleiman Consórcios <${notificationEmail}>` : `Sleiman Consórcios <onboarding@resend.dev>`,
         to: [notificationEmail],
         subject: `Nova solicitação — ${record.name}`,
         html: htmlContent,
