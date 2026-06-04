@@ -52,12 +52,26 @@ serve(async (req) => {
       .from("site_config")
       .select("contact")
       .eq("singleton_key", "main")
-      .single();
+      .maybeSingle();
 
-    const notificationEmail = (configData?.contact as any)?.notificationEmail || "sleimanconsorcios@gmail.com";
+    const notificationEmail = (configData?.contact as any)?.notificationEmail;
     const notificationEmailName = (configData?.contact as any)?.notificationEmailName || "Sleiman Consórcios";
 
-    console.log(`[send-lead-notification] Sending to: ${notificationEmail}`);
+    if (!notificationEmail) {
+      console.error("[send-lead-notification] No notification email found in site_config");
+      await supabaseClient.from("email_logs").insert({
+        lead_id: record?.id,
+        recipient: "n/a",
+        status: "error",
+        error_message: "E-mail de notificação não configurado no painel administrativo",
+      });
+      return new Response(JSON.stringify({ error: "Notification email not configured" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
+      });
+    }
+
+    console.log(`[send-lead-notification] Configuration: email=${notificationEmail}, name=${notificationEmailName}`);
 
     const htmlContent = `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; background-color: #121212; color: #ffffff; padding: 20px; border-radius: 8px;">
