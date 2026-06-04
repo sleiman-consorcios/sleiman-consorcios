@@ -1,0 +1,513 @@
+{
+  "nav": [
+    {
+      "label": "Início",
+      "href": "#inicio"
+    },
+    {
+      "label": "Como funciona",
+      "href": "#como-funciona"
+    },
+    {
+      "label": "Soluções",
+      "href": "#solucoes"
+    },
+    {
+      "label": "Sobre o Farid",
+      "href": "#sobre"
+    },
+    {
+      "label": "Simulação",
+      "href": "#simulacao"
+    },
+    {
+      "label": "Depoimentos",
+      "href": "#depoimentos"
+    },
+    {
+      "label": "Dúvidas",
+      "href": "#faq"
+    }
+  ],
+  "hero": {
+    "image": "/hero_test_image.png",
+    "headline": "Realize seu sonho — sem pagar juros",
+    "subheadline": "Mais de 20 anos no mercado imobiliário, agora trabalhando por você. Consultoria especializada, sem burocracia, com quem realmente conhece o mercado.",
+    "ctaPrimary": {
+      "text": "Simular grátis",
+      "href": "#simulacao"
+    },
+    "ctaSecondary": {
+      "text": "Fale com o Farid",
+      "href": "whatsapp"
+    },
+    "trustBadges": [
+      "Sem juros bancários",
+      "Consultoria personalizada",
+      "Administradoras autorizadas"
+    ],
+    "eyebrow": "Consórcio com quem entende",
+    "trustText": "Centenas de famílias já realizaram seus sonhos com a Sleiman"
+  },
+  "credibility": {
+    "title": "Números que refletem confiança",
+    "stats": [
+      {
+        "icon": "Award",
+        "value": "20+",
+        "label": "Anos no mercado imobiliário"
+      },
+      {
+        "icon": "Users",
+        "value": "R$0",
+        "label": "De juros pagos pelos nossos clientes"
+      },
+      {
+        "icon": "DollarSign",
+        "value": "45%",
+        "label": "Redução na parcela até a contemplação"
+      },
+      {
+        "icon": "MapPin",
+        "value": "100%",
+        "label": "Regulamentado pelo Banco Central"
+      }
+    ],
+    "partners": {
+      "title": "Representante autorizado de",
+      "logos": [
+        {
+          "name": "Porto Seguro",
+          "image": ""
+        },
+        {
+          "name": "Banco Central",
+          "image": ""
+        },
+        {
+          "name": "Embracon",
+          "image": ""
+        }
+      ]
+    }
+  },
+  "objectives": {
+    "title": "Qual é o seu objetivo?",
+    "subtitle": "Cada plano é personalizado conforme a sua realidade e suas metas.",
+    "cards": [
+      {
+        "icon": "🏠",
+        "title": "Quero comprar meu imóvel",
+        "description": "Conquiste a casa própria com planejamento, sem entrada obrigatória e sem juros bancários.",
+        "cta": "Simular agora"
+      },
+      {
+        "icon": "📈",
+        "title": "Quero formar patrimônio",
+        "description": "Use o consórcio como ferramenta estratégica para construir patrimônio sólido ao longo do tempo.",
+        "cta": "Simular agora"
+      },
+      {
+        "icon": "💡",
+        "title": "Quero investir com inteligência",
+        "description": "Diversifique com crédito programado, aproveitando lances estratégicos e valorização patrimonial.",
+        "cta": "Simular agora"
+      },
+      {
+        "icon": "🔄",
+        "title": "Quero quitar um financiamento",
+        "description": "Troque juros bancários por um consórcio inteligente e reduza significativamente o custo total.",
+        "cta": "Simular agora"
+      }
+    ]
+  },
+  "howItWorks": {
+    "title": "Como funciona",
+    "subtitle": "Um processo simples, transparente e orientado pelo Farid em cada etapa.",
+    "steps": [
+      {
+        "icon": "Target",
+        "number": "01",
+        "title": "Simule sem compromisso",
+        "description": "Escolha o tipo de bem e o valor do crédito. Em segundos você vê a parcela ideal para o seu orçamento."
+      },
+      {
+        "icon": "Calculator",
+        "number": "02",
+        "title": "Converse com o Farid",
+        "description": "Um especialista com 20 anos de experiência entra em contato para entender sua necessidade real e montar a melhor estratégia."
+      },
+      {
+        "icon": "Headphones",
+        "number": "03",
+        "title": "Seja contemplado",
+        "description": "Participe dos sorteios mensais ou use um lance para antecipar. Quando contemplado, use o crédito como quiser."
+      }
+    ]
+  },
+  "about": {
+    "title": "Sobre o Farid",
+    "subtitle": "Consultoria patrimonial com quem entende do assunto",
+    "image": "",
+    "text": "Com passagem por grandes incorporadoras e uma trajetória sólida no setor imobiliário brasileiro, Farid Sleiman traz um nível de consultoria que grandes corretoras não conseguem oferecer: atenção personalizada de quem já viu tudo no mercado.",
+    "highlights": [
+      "Experiência de mais de 20 anos no mercado",
+      "Atendimento consultivo e personalizado",
+      "Visão patrimonial de longo prazo",
+      "Acompanhamento em todas as etapas",
+      "Acesso às melhores administradoras do país"
+    ],
+    "founderName": "Farid Sleiman",
+    "founderRole": "Fundador & Especialista em Consórcios",
+    "badge": "Porto Seguro\nElite Blue",
+    "quote": "Passei 20 anos no mercado imobiliário vendo pessoas pagarem o dobro pelo mesmo imóvel. Criei a Sleiman para mudar isso.",
+    "metrics": [
+      {
+        "value": "20+",
+        "label": "Anos no mercado imobiliário"
+      },
+      {
+        "value": "Elite",
+        "label": "Representante Porto Seguro Blue"
+      },
+      {
+        "value": "100%",
+        "label": "Foco no seu resultado"
+      }
+    ]
+  },
+  "comparison": {
+    "title": "Consórcio vs Financiamento",
+    "subtitle": "Simulação para um imóvel de R$ 500.000. Os números não mentem.",
+    "tag": "Quem faz conta, faz consórcio",
+    "headers": [
+      "Imóvel de R$ 500.000",
+      "Consórcio Sleiman",
+      "Financiamento bancário"
+    ],
+    "rows": [
+      {
+        "feature": "Entrada obrigatória",
+        "consortium": "Sem entrada",
+        "financing": "R$ 100.000"
+      },
+      {
+        "feature": "Parcela mensal",
+        "consortium": "R$ 1.691/mês*",
+        "financing": "R$ 4.594/mês"
+      },
+      {
+        "feature": "Prazo",
+        "consortium": "200 meses",
+        "financing": "420 meses"
+      },
+      {
+        "feature": "Total de juros",
+        "consortium": "Zero juros",
+        "financing": "420% (mais de R$ 700k)"
+      },
+      {
+        "feature": "Custo total final",
+        "consortium": "R$ 615.000",
+        "financing": "R$ 1.256.171"
+      }
+    ],
+    "disclaimer": "Valores ilustrativos. As condições variam conforme perfil, administradora e estratégia adotada.",
+    "savingsText": "Você economiza R$ 641.000 💰",
+    "ctaText": "Quero economizar assim →"
+  },
+  "simulator": {
+    "title": "Simule seu consórcio",
+    "subtitle": "Preencha os campos abaixo e receba uma simulação personalizada diretamente no WhatsApp.",
+    "objectives": [
+      "🏠 Imóvel",
+      "🚗 Veículo",
+      "💡 Serviço",
+      "✨ Outro"
+    ],
+    "creditRanges": [
+      "Até R$ 100 mil",
+      "R$ 100 mil a R$ 300 mil",
+      "R$ 300 mil a R$ 500 mil",
+      "Acima de R$ 500 mil"
+    ],
+    "installmentRanges": [
+      "Até R$ 500/mês",
+      "R$ 500 a R$ 1.000/mês",
+      "R$ 1.000 a R$ 2.000/mês",
+      "Acima de R$ 2.000/mês"
+    ],
+    "calc": {
+      "adminRate": 0.0017,
+      "reductionFactor": 0.55,
+      "creditMin": 100000,
+      "creditMax": 1000000,
+      "creditStep": 50000,
+      "creditDefault": 300000,
+      "vehicleMaxCredit": 300000,
+      "prazoOptions": [
+        {
+          "value": 120,
+          "label": "120 meses (10 anos)"
+        },
+        {
+          "value": 160,
+          "label": "160 meses"
+        },
+        {
+          "value": 200,
+          "label": "200 meses (16,7 anos)"
+        },
+        {
+          "value": 240,
+          "label": "240 meses (20 anos)"
+        }
+      ],
+      "prazoDefault": 200,
+      "badges": [
+        "✓ Sem juros",
+        "✓ Sem entrada",
+        "✓ Banco Central"
+      ],
+      "ctaText": "Simular via WhatsApp — é grátis",
+      "privacyText": "🔒 Seus dados estão seguros · Sem abordagens invasivas",
+      "plans": [
+        {
+          "creditValue": 100000,
+          "installment": 850,
+          "interestRate": 0.85
+        },
+        {
+          "creditValue": 200000,
+          "installment": 1650,
+          "interestRate": 0.83
+        },
+        {
+          "creditValue": 300000,
+          "installment": 2400,
+          "interestRate": 0.8
+        },
+        {
+          "creditValue": 400000,
+          "installment": 3100,
+          "interestRate": 0.78
+        },
+        {
+          "creditValue": 500000,
+          "installment": 3750,
+          "interestRate": 0.75
+        },
+        {
+          "creditValue": 600000,
+          "installment": 4350,
+          "interestRate": 0.73
+        },
+        {
+          "creditValue": 700000,
+          "installment": 5000,
+          "interestRate": 0.71
+        },
+        {
+          "creditValue": 800000,
+          "installment": 5600,
+          "interestRate": 0.7
+        },
+        {
+          "creditValue": 900000,
+          "installment": 6150,
+          "interestRate": 0.68
+        },
+        {
+          "creditValue": 1000000,
+          "installment": 6700,
+          "interestRate": 0.67
+        }
+      ]
+    }
+  },
+  "videos": {
+    "title": "O especialista por trás da Sleiman",
+    "subtitle": "Farid compartilha sua experiência de 20 anos no mercado. Assista antes de decidir.",
+    "tag": "Aprenda com quem sabe",
+    "items": [
+      {
+        "title": "Por que o consórcio é melhor que o financiamento?",
+        "description": "Farid explica as diferenças.",
+        "thumbnail": "",
+        "url": "https://youtube.com",
+        "tag": "Entrevista"
+      },
+      {
+        "title": "Como funciona o lance e como dar o certo",
+        "description": "Entenda o processo de lance.",
+        "thumbnail": "",
+        "url": "https://youtube.com",
+        "tag": "Educação"
+      },
+      {
+        "title": "Mercado imobiliário 2025 — oportunidades de agora",
+        "description": "Oportunidades atuais.",
+        "thumbnail": "",
+        "url": "https://youtube.com",
+        "tag": "Mercado"
+      }
+    ]
+  },
+  "testimonials": {
+    "title": "Histórias de quem já realizou",
+    "subtitle": "Clientes reais, resultados reais.",
+    "tag": "Clientes reais",
+    "items": [
+      {
+        "name": "João Lucca",
+        "role": "Cliente",
+        "text": "Fui contemplado no 3º mês e comprei meu apartamento à vista. Economizei mais de R$ 400 mil em relação ao financiamento que eu tinha no banco.",
+        "rating": 5,
+        "image": "",
+        "city": "São José dos Campos, SP"
+      },
+      {
+        "name": "Maria Aparecida",
+        "role": "Cliente",
+        "text": "O Farid me explicou tudo com muita paciência. Nunca senti que estava sendo vendida — senti que estava sendo orientada por alguém que entendia de verdade.",
+        "rating": 5,
+        "image": "",
+        "city": "Taubaté, SP"
+      },
+      {
+        "name": "Roberto e Silvia",
+        "role": "Clientes",
+        "text": "Usamos o consórcio para comprar o terreno e construir. Parcelas menores do que o financiamento e sem juros. O melhor investimento que já fiz.",
+        "rating": 5,
+        "image": "",
+        "city": "Jacareí, SP"
+      }
+    ]
+  },
+  "security": {
+    "title": "Segurança e transparência",
+    "subtitle": "Trabalhamos apenas com administradoras regulamentadas e processos 100% transparentes.",
+    "points": [
+      {
+        "icon": "Shield",
+        "title": "Administradoras regulamentadas",
+        "description": "Todas as administradoras parceiras são autorizadas e fiscalizadas pelo Banco Central."
+      },
+      {
+        "icon": "Lock",
+        "title": "Contratação segura",
+        "description": "Processo digital seguro com suporte humano em cada etapa da contratação."
+      },
+      {
+        "icon": "FileCheck",
+        "title": "Transparência total",
+        "description": "Sem letras miúdas. Todas as condições são explicadas de forma clara antes da contratação."
+      },
+      {
+        "icon": "HeartHandshake",
+        "title": "Suporte contínuo",
+        "description": "Acompanhamento ativo mesmo após a contratação, com orientação em assembleias e lances."
+      }
+    ]
+  },
+  "faq": {
+    "title": "Perguntas frequentes",
+    "subtitle": "Respostas claras para as perguntas mais comuns sobre consórcio.",
+    "items": [
+      {
+        "question": "Dependo de sorte para ser contemplado?",
+        "answer": "O sorteio é apenas uma das formas de contemplação. Você também pode dar um lance — que é um adiantamento de parcelas. Com a estratégia certa de lance, que o Farid vai te ajudar a montar, é possível ser contemplado nos primeiros meses do consórcio."
+      },
+      {
+        "question": "O consórcio é seguro? E se a empresa fechar?",
+        "answer": "Sim, é 100% seguro. Todos os grupos de consórcio são fiscalizados pelo Banco Central do Brasil (BACEN). As administradoras são obrigadas a manter os recursos separados. Se a administradora encerrar atividades, o BACEN garante a continuidade do grupo."
+      },
+      {
+        "question": "Posso usar o crédito para comprar imóvel usado?",
+        "answer": "Sim! A carta de crédito de imóvel pode ser usada para comprar imóvel novo, usado, terreno, construção ou reforma. Você tem total flexibilidade."
+      },
+      {
+        "question": "O que acontece se eu não puder pagar uma parcela?",
+        "answer": "Atrasos podem suspender sua participação nos sorteios temporariamente, mas seu contrato é mantido. Regularizando o pagamento, você retorna normalmente."
+      },
+      {
+        "question": "Vale a pena comprar o bem à vista e fazer o consórcio?",
+        "answer": "Sim, em muitos casos faz sentido. Você usa parte do dinheiro para dar um lance vencedor, é contemplado rápido, e usa a carta para negociar o bem à vista."
+      },
+      {
+        "question": "Quanto tempo leva para ser contemplado?",
+        "answer": "Pelo sorteio, pode acontecer no 1º mês ou no último. Pelo lance, com a estratégia certa, é possível antecipar muito. O Farid faz um estudo de lance personalizado."
+      }
+    ]
+  },
+  "finalCta": {
+    "title": "Qual é o seu objetivo?",
+    "subtitle": "Simulação gratuita e sem compromisso. O Farid entra em contato pessoalmente.",
+    "ctaWhatsapp": "Quero minha simulação gratuita",
+    "ctaForm": "Enviar mensagem",
+    "tag": "Comece agora",
+    "privacyText": "🔒 Seus dados estão protegidos · Nenhuma abordagem invasiva · Farid responde pessoalmente",
+    "objectives": [
+      "🏠 Comprar imóvel",
+      "🔑 Sair do aluguel",
+      "🚗 Trocar o carro",
+      "📈 Investir"
+    ],
+    "creditOptions": [
+      "Até R$ 100.000",
+      "Entre R$ 100k e R$ 300k",
+      "Entre R$ 300k e R$ 600k",
+      "Entre R$ 600k e R$ 1M",
+      "Acima de R$ 1M"
+    ]
+  },
+  "footer": {
+    "description": "Consultoria especializada em consórcios com a experiência de quem passou 20 anos no mercado imobiliário. Representante autorizado Porto Seguro Elite Blue.",
+    "legal": "Sleiman Consórcios atua como representante comercial de administradoras de consórcio autorizadas pelo Banco Central do Brasil.",
+    "privacyPolicy": "#",
+    "terms": "#",
+    "navLinks": [
+      "Como funciona",
+      "Vantagens",
+      "Produtos",
+      "Perguntas frequentes"
+    ],
+    "productLinks": [
+      "Consórcio de Imóvel",
+      "Consórcio de Veículo",
+      "Consórcio de Investimento"
+    ]
+  },
+  "promoBanner": {
+    "slides": [
+      {
+        "image": "",
+        "alt": "Promoção especial"
+      }
+    ],
+    "ctaText": "Simule agora",
+    "ctaHref": "#simulacao"
+  },
+  "cardapio": {
+    "title": "Nossos Produtos",
+    "subtitle": "Confira nossas opções de consórcio e encontre o plano ideal para você",
+    "items": [
+      {
+        "image": "",
+        "title": "Consórcio Imóvel",
+        "installmentText": "R$ 450,00"
+      },
+      {
+        "image": "",
+        "title": "Consórcio Veículo",
+        "installmentText": "R$ 350,00"
+      },
+      {
+        "image": "",
+        "title": "Consórcio Investimento",
+        "installmentText": "R$ 600,00"
+      }
+    ],
+    "ctaText": "Realize seu sonho"
+  }
+}
