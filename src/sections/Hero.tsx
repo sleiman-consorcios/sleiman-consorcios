@@ -296,7 +296,7 @@ export function Hero({ content, config, simulatorCalc }: Props) {
             className="w-full h-full object-cover opacity-20" 
             alt={`Banner de consórcio - ${config.brand.name}`} 
             loading="eager"
-            onError={(e) => { (e.target as HTMLImageElement).src = "/placeholder.svg"; }}
+            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
           />
           <div className="absolute inset-0 bg-gradient-to-r from-midnight via-midnight/80 to-transparent" />
         </div>

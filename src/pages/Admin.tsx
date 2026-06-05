@@ -441,7 +441,7 @@ function AuthenticatedAdminPanel({ onLogout }: { onLogout: () => void }) {
     <AdminContext.Provider value={{ uploadAsset: onUploadAsset, uploadEnabled: true, updateSiteConfig }}>
       <div className="min-h-screen bg-[#FDFCF9] pb-20">
         <header className="border-b bg-white/80 backdrop-blur-md sticky top-0 z-40 h-auto min-h-16 flex flex-col sm:flex-row items-center px-4 py-2 sm:py-0">
-          <div className="max-w-4xl mx-auto w-full flex flex-col sm:flex-row justify-between items-center gap-3">
+          <div className="max-w-7xl mx-auto w-full flex flex-col sm:flex-row justify-between items-center gap-3">
             <div className="flex items-center gap-3 w-full sm:w-auto">
               <div className="w-8 h-8 shrink-0 rounded-lg bg-gold flex items-center justify-center shadow-sm">
                 <Lock className="w-4 h-4 text-midnight" />
@@ -475,7 +475,7 @@ function AuthenticatedAdminPanel({ onLogout }: { onLogout: () => void }) {
           </div>
         </header>
 
-        <main className="max-w-4xl mx-auto px-4 py-8">
+        <main className="max-w-7xl mx-auto px-4 py-8">
           <Tabs value={activeMainTab} onValueChange={setActiveMainTab} className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-2">
               <TabsList className="bg-muted/50 p-1 rounded-xl h-auto w-full sm:w-auto flex overflow-x-auto scrollbar-none">
@@ -569,7 +569,7 @@ function AuthenticatedAdminPanel({ onLogout }: { onLogout: () => void }) {
             </Button>
           </div>
         </footer>
-        <div className="max-w-4xl mx-auto px-4 mt-8 pb-12 flex justify-end">
+        <div className="max-w-7xl mx-auto px-4 mt-8 pb-12 flex justify-end">
           <span className="text-[10px] font-medium text-muted-foreground opacity-40 hover:opacity-100 transition-opacity uppercase tracking-widest">
             V 1.0
           </span>

@@ -1,3 +1,4 @@
+import { Check } from "lucide-react";
 import { AnimatedSection } from "@/components/AnimatedSection";
 import { SimulatorForm } from "@/components/SimulatorForm";
 import type { SimulatorContent, SiteConfig } from "@/types";
@@ -70,8 +71,18 @@ export function Simulator({ content, config, webhookUrl }: Props) {
 
               {/* Badges de Confiança abaixo do card */}
               <div className="flex flex-wrap justify-center gap-6 mt-10 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
-                <img src="/placeholder.svg" className="h-6 w-auto opacity-30" alt="Autorizado pelo Banco Central" />
-                <img src="/placeholder.svg" className="h-6 w-auto opacity-30" alt="ABAC" />
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-full border border-muted-foreground/30 flex items-center justify-center">
+                    <Check className="w-3 h-3 text-muted-foreground" />
+                  </div>
+                  <span className="text-[10px] font-bold uppercase tracking-[1px] text-muted-foreground/70">Autorizado pelo Banco Central</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-full border border-muted-foreground/30 flex items-center justify-center">
+                    <Check className="w-3 h-3 text-muted-foreground" />
+                  </div>
+                  <span className="text-[10px] font-bold uppercase tracking-[1px] text-muted-foreground/70">Membro ABAC</span>
+                </div>
                 <span className="text-[10px] font-bold uppercase tracking-[2px] text-muted-foreground my-auto">Empresa Certificada</span>
               </div>
             </AnimatedSection>
