@@ -87,6 +87,7 @@ serve(async (req) => {
           <tr style="border-bottom: 1px solid #333;"><td style="padding: 12px 0; font-weight: bold;">CPF</td><td style="padding: 12px 0;">${record.cpf || '-'}</td></tr>
           <tr style="border-bottom: 1px solid #333;"><td style="padding: 12px 0; font-weight: bold;">Objetivo</td><td style="padding: 12px 0;">${record.objective || '-'}</td></tr>
           <tr style="border-bottom: 1px solid #333;"><td style="padding: 12px 0; font-weight: bold;">Valor desejado</td><td style="padding: 12px 0;">${record.credit || '-'}</td></tr>
+          <tr style="border-bottom: 1px solid #333;"><td style="padding: 12px 0; font-weight: bold;">Conhece consórcio?</td><td style="padding: 12px 0;">${record.knowsConsortium || record.knows_consortium || '-'}</td></tr>
           <tr><td style="padding: 12px 0; font-weight: bold;">Tráfego</td><td style="padding: 12px 0;">${record.traffic_source || 'direct'}</td></tr>
         </table>
       </div>

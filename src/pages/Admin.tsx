@@ -338,6 +338,18 @@ function SiteConfigEditor({ config, onChange }: { config: SiteConfig; onChange: 
               id="field-birth" 
             />
           </div>
+          <div className="h-px bg-[#EDE8DC]" />
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label htmlFor="field-knows-consortium">Solicitar "Conhece Consórcio?"</Label>
+              <p className="text-[10px] text-muted-foreground">Pergunta se o cliente já conhece o produto</p>
+            </div>
+            <Switch 
+              checked={config.formFields?.showKnowsConsortium === true} 
+              onCheckedChange={v => u("formFields.showKnowsConsortium", v)} 
+              id="field-knows-consortium" 
+            />
+          </div>
         </div>
       </div>
     </div>

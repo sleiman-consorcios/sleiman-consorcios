@@ -143,6 +143,7 @@ export function LeadsManager() {
       installment: lead.installment || undefined,
       urgency: lead.urgency || undefined,
       hasLance: lead.has_lance || undefined,
+      knowsConsortium: (lead as any).knows_consortium || undefined,
       birthDate: (lead as any).birth_date || undefined,
     });
     
@@ -231,7 +232,7 @@ export function LeadsManager() {
           cleanObjective,
           lead.credit,
           lead.income || "-",
-          lead.urgency || lead.has_lance || "-",
+          (lead as any).knows_consortium || "-",
           lead.form_type === "hero_modal" ? "Modal Hero" : 
           lead.form_type === "main_calculator" ? "Calculadora" : 
           lead.form_type === "footer_contact" ? "Rodapé" : 
@@ -241,7 +242,7 @@ export function LeadsManager() {
       });
 
       autoTable(doc, {
-        head: [["Data", "Nome", "WhatsApp", "CPF", "Nasc.", "Objetivo", "Crédito", "Renda", "Urg./Lance", "Origem", "Tráfego"]],
+        head: [["Data", "Nome", "WhatsApp", "CPF", "Nasc.", "Objetivo", "Crédito", "Renda", "Conhece?", "Origem", "Tráfego"]],
         body: tableData,
         startY: 40,
         styles: { fontSize: 7 }, // Reduced font size to fit more columns

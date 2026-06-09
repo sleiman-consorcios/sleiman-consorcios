@@ -22,7 +22,8 @@ export function FinalCta({ content, config }: Props) {
     credit: content.creditOptions[0] || "",
     objective: content.objectives[0] || "",
     income: "",
-    urgency: "Quero comprar"
+    urgency: "Quero comprar",
+    knowsConsortium: ""
   });
   const [loading, setLoading] = useState(false);
   const [checkingWhatsApp, setCheckingWhatsApp] = useState(false);
@@ -72,7 +73,8 @@ export function FinalCta({ content, config }: Props) {
       creditRange: formData.credit,
       objective: formData.objective || "Interesse Geral / Simulação Livre",
       income: formData.income,
-      urgency: formData.urgency
+      urgency: formData.urgency,
+      knowsConsortium: formData.knowsConsortium
     };
 
     // Salvar no banco de dados para auditoria
@@ -86,6 +88,7 @@ export function FinalCta({ content, config }: Props) {
         credit: formData.credit,
         income: formData.income,
         urgency: formData.urgency,
+        knows_consortium: formData.knowsConsortium,
         source: "final_cta_form",
         form_type: "footer_contact",
         traffic_source: getTrafficSource(),
@@ -120,6 +123,7 @@ export function FinalCta({ content, config }: Props) {
       objective: formData.objective || "Interesse Geral / Simulação Livre",
       income: formData.income,
       urgency: formData.urgency,
+      knowsConsortium: formData.knowsConsortium,
       baseMessage: config.contact.whatsappMessage
     });
 
@@ -285,6 +289,28 @@ export function FinalCta({ content, config }: Props) {
                 ))}
               </div>
             </div>
+
+            {config.formFields?.showKnowsConsortium && (
+              <div className="flex flex-col gap-1.5 mb-6 text-left">
+                <label className="text-[11px] font-semibold uppercase tracking-[1px] text-white/40">Conhece consórcio?</label>
+                <div className="grid grid-cols-2 gap-3">
+                  {["Sim", "Não"].map((option) => (
+                    <button
+                      key={option}
+                      type="button"
+                      onClick={() => setFormData(prev => ({ ...prev, knowsConsortium: option }))}
+                      className={`py-3 px-4 border-[1.5px] rounded-lg text-sm font-medium transition-all duration-200 ${
+                        formData.knowsConsortium === option
+                          ? "bg-gold/20 border-gold text-gold"
+                          : "bg-white/[0.07] border-white/[0.12] text-white/70 hover:bg-white/10"
+                      }`}
+                    >
+                      {option === "Sim" ? "Sim, conheço" : "Não, gostaria de entender"}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <Button
               type="submit"

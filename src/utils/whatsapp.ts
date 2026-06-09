@@ -32,6 +32,7 @@ export function buildContactMessage(data: {
   credit?: string; months?: string; installment?: string;
   hasLance?: string; message?: string; urgency?: string;
   income?: string;
+  knowsConsortium?: string;
   baseMessage?: string;
 }): string {
   let msg = data.baseMessage ? `${data.baseMessage}\n\n` : "Olá, gostaria de uma simulação.\n\n";
@@ -58,6 +59,7 @@ export function buildContactMessage(data: {
   if (data.hasLance) msg += `\nPossui lance: ${data.hasLance}`;
   if (data.urgency) msg += `\nUrgência: ${data.urgency}`;
   if (data.income) msg += `\nRenda: ${data.income}`;
+  if (data.knowsConsortium) msg += `\nConhece consórcio: ${data.knowsConsortium}`;
   if (data.message) msg += `\nMensagem: ${data.message}`;
   
   msg += "\n\nOrigem: Landing Page Sleiman Consórcios";

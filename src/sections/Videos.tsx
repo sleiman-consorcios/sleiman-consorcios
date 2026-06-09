@@ -1,9 +1,10 @@
 import { AnimatedSection } from "@/components/AnimatedSection";
-import { Play, X } from "lucide-react";
+import { Play, X, ChevronLeft, ChevronRight } from "lucide-react";
 import type { VideosContent } from "@/types";
 import { useState, useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogClose, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 function getYouTubeId(url: string): string | null {
@@ -12,9 +13,10 @@ function getYouTubeId(url: string): string | null {
 }
 
 function getThumbnail(item: { thumbnail?: string; url: string }): string | null {
-  if (item.thumbnail) return item.thumbnail;
+  if (item.thumbnail && item.thumbnail.trim() !== "") return item.thumbnail;
   const id = getYouTubeId(item.url);
-  return id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : null;
+  // Use maxresdefault for better quality if available, falling back to hqdefault
+  return id ? `https://i.ytimg.com/vi/${id}/hqdefault.jpg` : null;
 }
 
 export function Videos({ content }: { content: VideosContent }) {
@@ -36,7 +38,9 @@ export function Videos({ content }: { content: VideosContent }) {
     };
   }, [selectedVideo]);
 
-  if (!content.items || !content.items.length) return null;
+  const validItems = (content.items || []).filter(v => v.url && v.url.trim() !== "");
+  if (!validItems.length) return null;
+
   return (
     <section id="videos" className="py-20 md:py-28 px-4 sm:px-8 bg-white">
       <div className="max-w-[1100px] mx-auto">
@@ -51,55 +55,70 @@ export function Videos({ content }: { content: VideosContent }) {
           </h2>
           <p className="text-[17px] text-muted-foreground font-light mt-4 max-w-[560px]">{subtitle}</p>
         </AnimatedSection>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-14">
-          {content.items.map((v, i) => {
-            const isShorts = v.url.includes("shorts");
-            const thumb = getThumbnail(v);
-            
-            return (
-              <AnimatedSection key={i} delay={i * 0.1} className="h-full">
-                <div
-                  onClick={(e) => {
-                    e.preventDefault();
-                    if (clickAction === "modal") {
-                      setSelectedVideo(v.url);
-                    } else {
-                      window.open(v.url, "_blank", "noopener,noreferrer");
-                    }
-                  }}
-                  className="group flex flex-col h-full rounded-2xl overflow-hidden border border-[#EDE8DC] transition-all duration-300 hover:shadow-[0_20px_48px_rgba(0,0,0,0.1)] hover:-translate-y-1 cursor-pointer"
-                >
-                  <div className={`relative bg-muted overflow-hidden shrink-0 ${isShorts ? "aspect-[9/16]" : "aspect-video"}`}>
-                    <span className="absolute top-3 left-3 font-heading text-5xl font-bold text-gold/15 z-10">{String(i + 1).padStart(2, "0")}</span>
-                    
-                    {!loadedThumbnails[i] && (
-                      <Skeleton className="absolute inset-0 w-full h-full" />
-                    )}
+        <div className="mt-14 relative px-4 sm:px-0">
+          <Carousel
+            opts={{
+              align: "start",
+              loop: false,
+            }}
+            className="w-full"
+          >
+            <CarouselContent className="-ml-4">
+              {validItems.map((v, i) => {
+                const thumb = getThumbnail(v);
+                
+                return (
+                  <CarouselItem key={i} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/3">
+                    <AnimatedSection delay={i * 0.1} className="h-full">
+                      <div
+                        onClick={(e) => {
+                          e.preventDefault();
+                          if (clickAction === "modal") {
+                            setSelectedVideo(v.url);
+                          } else {
+                            window.open(v.url, "_blank", "noopener,noreferrer");
+                          }
+                        }}
+                        className="group flex flex-col h-full rounded-2xl overflow-hidden border border-[#EDE8DC] transition-all duration-300 hover:shadow-[0_20px_48px_rgba(0,0,0,0.1)] hover:-translate-y-1 cursor-pointer bg-white"
+                      >
+                        <div className="relative bg-muted overflow-hidden shrink-0 aspect-video">
+                          <span className="absolute top-3 left-3 font-heading text-5xl font-bold text-gold/15 z-10">{String(i + 1).padStart(2, "0")}</span>
+                          
+                          {!loadedThumbnails[i] && (
+                            <Skeleton className="absolute inset-0 w-full h-full" />
+                          )}
 
-                    {thumb && (
-                      <img 
-                        src={thumb} 
-                        alt={v.title} 
-                        onLoad={() => setLoadedThumbnails(prev => ({ ...prev, [i]: true }))}
-                        className={`w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300 ${!loadedThumbnails[i] ? 'invisible' : 'visible'}`} 
-                        loading="lazy" 
-                      />
-                    )}
+                          {thumb && (
+                            <img 
+                              src={thumb} 
+                              alt={v.title} 
+                              onLoad={() => setLoadedThumbnails(prev => ({ ...prev, [i]: true }))}
+                              className={`w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300 ${!loadedThumbnails[i] ? 'invisible' : 'visible'}`} 
+                              loading="lazy" 
+                            />
+                          )}
 
-                    <div className="absolute inset-0 flex items-center justify-center z-10">
-                      <div className="w-12 h-12 rounded-full bg-gold/90 group-hover:bg-gold group-hover:scale-110 flex items-center justify-center transition-all duration-200">
-                        <Play className="w-[18px] h-[18px] text-midnight ml-0.5" fill="currentColor" />
+                          <div className="absolute inset-0 flex items-center justify-center z-10">
+                            <div className="w-12 h-12 rounded-full bg-gold/90 group-hover:bg-gold group-hover:scale-110 flex items-center justify-center transition-all duration-200">
+                              <Play className="w-[18px] h-[18px] text-midnight ml-0.5" fill="currentColor" />
+                            </div>
+                          </div>
+                        </div>
+                        <div className="p-5 flex-grow">
+                          <p className="text-[10px] font-bold uppercase tracking-[1.5px] text-gold mb-1.5">{v.tag}</p>
+                          <h3 className="font-heading text-[17px] font-semibold text-midnight leading-snug">{v.title}</h3>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                  <div className="p-5 flex-grow">
-                    <p className="text-[10px] font-bold uppercase tracking-[1.5px] text-gold mb-1.5">{v.tag}</p>
-                    <h3 className="font-heading text-[17px] font-semibold text-midnight leading-snug">{v.title}</h3>
-                  </div>
-                </div>
-              </AnimatedSection>
-            );
-          })}
+                    </AnimatedSection>
+                  </CarouselItem>
+                );
+              })}
+            </CarouselContent>
+            <div className="hidden md:block">
+              <CarouselPrevious className="-left-12 border-[#EDE8DC] text-midnight hover:bg-gold hover:text-white transition-colors" />
+              <CarouselNext className="-right-12 border-[#EDE8DC] text-midnight hover:bg-gold hover:text-white transition-colors" />
+            </div>
+          </Carousel>
         </div>
       </div>
 

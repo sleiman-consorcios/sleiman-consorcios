@@ -132,6 +132,7 @@ export type Database = {
           id: string
           income: string | null
           installment: string | null
+          knows_consortium: string | null
           months: string | null
           name: string
           notification_log: Json | null
@@ -153,6 +154,7 @@ export type Database = {
           id?: string
           income?: string | null
           installment?: string | null
+          knows_consortium?: string | null
           months?: string | null
           name: string
           notification_log?: Json | null
@@ -174,6 +176,7 @@ export type Database = {
           id?: string
           income?: string | null
           installment?: string | null
+          knows_consortium?: string | null
           months?: string | null
           name?: string
           notification_log?: Json | null

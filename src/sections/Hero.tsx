@@ -64,6 +64,7 @@ export function Hero({ content, config, simulatorCalc }: Props) {
   const [customerCPF, setCustomerCPF] = useState("");
   const [customerBirthDate, setCustomerBirthDate] = useState("");
   const [customerIncome, setCustomerIncome] = useState("");
+  const [knowsConsortium, setKnowsConsortium] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [checkingWhatsApp, setCheckingWhatsApp] = useState(false);
@@ -596,6 +597,23 @@ export function Hero({ content, config, simulatorCalc }: Props) {
                         )} 
                       />
                       {errors.birthDate && <p className="text-[10px] text-destructive font-semibold ml-2 uppercase tracking-wider">{errors.birthDate}</p>}
+                    </div>
+                  )}
+                  {config.formFields?.showKnowsConsortium && (
+                    <div className="space-y-2 col-span-1 sm:col-span-2 mt-2">
+                      <p className="text-[10px] font-bold uppercase tracking-[1.5px] text-midnight/60 ml-1">Conhece consórcio?</p>
+                      <div className="grid grid-cols-2 gap-3">
+                        {["Sim", "Não"].map((option) => (
+                          <button
+                            key={option}
+                            type="button"
+                            onClick={() => setKnowsConsortium(option)}
+                            className={`py-2 px-3 border-2 rounded-xl text-center text-xs font-semibold transition-all duration-300 ${knowsConsortium === option ? "border-gold bg-gold-pale/50 text-midnight shadow-sm" : "border-border/60 text-muted-foreground hover:border-gold/40 hover:bg-gold-pale/10"}`}
+                          >
+                            {option === "Sim" ? "Sim, conheço" : "Não, gostaria de entender"}
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>

@@ -34,6 +34,20 @@ function set<T>(obj: T, path: string, value: unknown): T {
   return c;
 }
 
+function FieldGroup({ title, children }: { title: string, children: React.ReactNode }) {
+  return (
+    <div className="bg-white p-4 rounded-lg border border-slate-100 mt-2">
+      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+        {title}
+        <span className="h-px bg-slate-100 flex-1"></span>
+      </p>
+      <div className="space-y-4">
+        {children}
+      </div>
+    </div>
+  );
+}
+
 
 export function ContentSectionEditor({ content: rawContent, siteConfig, onChange }: Props) {
   const adminCtx = useAdminContext();
@@ -346,7 +360,41 @@ export function ContentSectionEditor({ content: rawContent, siteConfig, onChange
         );
       case "simulator":
         return (
-          <CollapsibleSection key="simulator" title="🧮 Simulador" description="Configurações globais de taxas e limites do simulador de consórcio" icon={<Calculator className="w-4 h-4" />}>
+          <CollapsibleSection key="simulator" title="🧮 Simulador e Formulários" description="Cálculos, taxas e campos de contato" icon={<Calculator className="w-4 h-4" />}>
+             <FieldGroup title="Configuração dos Formulários">
+               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                 <CheckboxField label="Exibir campo CPF" value={siteConfig.formFields?.showCPF !== false} onChange={v => {
+                   const c = JSON.parse(JSON.stringify(siteConfig));
+                   if (!c.formFields) c.formFields = {};
+                   c.formFields.showCPF = v;
+                   onChange({ ...content }); // Force state update
+                   adminCtx.updateSiteConfig(c);
+                 }} />
+                 <CheckboxField label="Exibir campo Nascimento" value={siteConfig.formFields?.showBirthDate !== false} onChange={v => {
+                   const c = JSON.parse(JSON.stringify(siteConfig));
+                   if (!c.formFields) c.formFields = {};
+                   c.formFields.showBirthDate = v;
+                   onChange({ ...content }); // Force state update
+                   adminCtx.updateSiteConfig(c);
+                 }} />
+                 <CheckboxField label="Exibir campo Renda" value={siteConfig.formFields?.showIncome !== false} onChange={v => {
+                   const c = JSON.parse(JSON.stringify(siteConfig));
+                   if (!c.formFields) c.formFields = {};
+                   c.formFields.showIncome = v;
+                   onChange({ ...content }); // Force state update
+                   adminCtx.updateSiteConfig(c);
+                 }} />
+                 <CheckboxField label="Exibir pergunta 'Conhece consórcio?'" value={siteConfig.formFields?.showKnowsConsortium === true} onChange={v => {
+                   const c = JSON.parse(JSON.stringify(siteConfig));
+                   if (!c.formFields) c.formFields = {};
+                   c.formFields.showKnowsConsortium = v;
+                   onChange({ ...content }); // Force state update
+                   adminCtx.updateSiteConfig(c);
+                 }} />
+               </div>
+               <p className="text-[10px] text-muted-foreground mt-2 italic">* Estas configurações afetam todos os formulários da landing page.</p>
+             </FieldGroup>
+
              <Field label="Destaque superior (Tag)" hint="Texto pequeno acima do título (ex: Simulação Personalizada)" value={content.simulator.tag || ""} onChange={v => u("simulator.tag", v)} />
              <Field label="Título" hint="Título principal da seção de simulação" value={content.simulator.title} onChange={v => u("simulator.title", v)} />
 
@@ -545,17 +593,61 @@ export function ContentSectionEditor({ content: rawContent, siteConfig, onChange
             <Field label="Título" value={content.videos.title} onChange={v => u("videos.title", v)} />
             <TextareaField label="Subtítulo" value={content.videos.subtitle} onChange={v => u("videos.subtitle", v)} rows={2} />
             {content.videos.items.map((item, i) => (
-              <div key={i} className="p-3 rounded-lg border border-border/50 bg-muted/30 space-y-2 relative">
-                <Button variant="ghost" size="icon" className="absolute top-2 right-2 h-7 w-7 text-destructive" onClick={() => {
-                  const items = content.videos.items.filter((_, j) => j !== i);
-                  u("videos.items", items);
-                }}><Trash2 className="w-3.5 h-3.5" /></Button>
-                <Field label="Título" value={item.title} onChange={v => u(`videos.items.${i}.title`, v)} />
-                <Field label="Tag do vídeo" value={item.tag} onChange={v => u(`videos.items.${i}.tag`, v)} />
-                <Field label="URL do YouTube" value={item.url} onChange={v => u(`videos.items.${i}.url`, v)} />
+              <div key={i} className="p-4 rounded-xl border border-border bg-white shadow-sm space-y-3 relative group">
+                <div className="absolute top-2 right-2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="flex flex-col gap-0.5 mr-2">
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-6 w-6 text-slate-400 hover:text-gold" 
+                      disabled={i === 0}
+                      onClick={() => {
+                        const items = [...content.videos.items];
+                        [items[i-1], items[i]] = [items[i], items[i-1]];
+                        u("videos.items", items);
+                      }}
+                    >
+                      <ArrowUp className="w-3.5 h-3.5" />
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-6 w-6 text-slate-400 hover:text-gold" 
+                      disabled={i === content.videos.items.length - 1}
+                      onClick={() => {
+                        const items = [...content.videos.items];
+                        [items[i+1], items[i]] = [items[i], items[i+1]];
+                        u("videos.items", items);
+                      }}
+                    >
+                      <ArrowDown className="w-3.5 h-3.5" />
+                    </Button>
+                  </div>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:bg-destructive/10" onClick={() => {
+                    const items = content.videos.items.filter((_, j) => j !== i);
+                    u("videos.items", items);
+                  }}><Trash2 className="w-4 h-4" /></Button>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-3">
+                    <Field label="Título" value={item.title} onChange={v => u(`videos.items.${i}.title`, v)} />
+                    <Field label="Tag do vídeo" value={item.tag} onChange={v => u(`videos.items.${i}.tag`, v)} />
+                    <Field label="URL do YouTube" value={item.url} onChange={v => u(`videos.items.${i}.url`, v)} />
+                  </div>
+                  <div className="space-y-3">
+                    <ImageUploadField 
+                      folder="upload" 
+                      label="Capa do Vídeo (Opcional)" 
+                      value={item.thumbnail || ""} 
+                      onChange={v => u(`videos.items.${i}.thumbnail`, v)} 
+                      hint="Recomendado: 1280x720px (Proporção 16:9). Se vazio, usará a miniatura do YouTube."
+                    />
+                  </div>
+                </div>
               </div>
             ))}
-            <Button variant="outline" size="sm" onClick={() => u("videos.items", [...content.videos.items, { title: "", tag: "Depoimento", url: "", thumbnail: "", description: "" }])}><Plus className="w-3 h-3 mr-1" />Adicionar vídeo</Button>
+            <Button variant="outline" size="sm" onClick={() => u("videos.items", [...content.videos.items, { title: "", tag: "Depoimento", url: "", thumbnail: "", description: "" }])} className="w-full border-dashed py-6"><Plus className="w-4 h-4 mr-2" />Adicionar novo vídeo</Button>
           </CollapsibleSection>
         );
       case "testimonials":

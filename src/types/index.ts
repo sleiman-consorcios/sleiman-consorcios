@@ -26,6 +26,7 @@ export interface SiteConfig {
     showCPF: boolean;
     showIncome: boolean;
     showBirthDate: boolean;
+    showKnowsConsortium?: boolean;
   };
   webhookUrl: string;
   theme: ThemeKey;

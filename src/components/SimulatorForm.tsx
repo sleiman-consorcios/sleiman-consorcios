@@ -55,7 +55,8 @@ export function SimulatorForm({ content, config, webhookUrl }: Props) {
     objective: content.objectives[0] || "Imóvel", 
     credit: 210000, 
     months: 240,
-    hasLance: "" 
+    hasLance: "",
+    knowsConsortium: "" 
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
@@ -120,7 +121,8 @@ export function SimulatorForm({ content, config, webhookUrl }: Props) {
       ...form, 
       credit: formatCurrency(form.credit),
       months: String(form.months),
-      installment: formatCurrency(estimatedInstallment)
+      installment: formatCurrency(estimatedInstallment),
+      knowsConsortium: form.knowsConsortium
     };
 
     sendLeadWebhook(webhookUrl, payload);
@@ -138,6 +140,7 @@ export function SimulatorForm({ content, config, webhookUrl }: Props) {
         months: String(form.months),
         installment: formatCurrency(estimatedInstallment),
         has_lance: form.hasLance,
+        knows_consortium: form.knowsConsortium,
         source: "main_simulator",
         form_type: "main_calculator",
         traffic_source: getTrafficSource(),
@@ -172,6 +175,7 @@ export function SimulatorForm({ content, config, webhookUrl }: Props) {
       months: String(form.months),
       installment: formatCurrency(estimatedInstallment),
       hasLance: form.hasLance,
+      knowsConsortium: form.knowsConsortium,
       baseMessage: config.contact.whatsappMessage
     });
     
@@ -361,6 +365,18 @@ export function SimulatorForm({ content, config, webhookUrl }: Props) {
               <SelectItem value="Talvez" className="py-3 px-4 focus:bg-gold-pale">Gostaria de avaliar</SelectItem>
             </SelectContent>
           </Select>
+
+          {config.formFields?.showKnowsConsortium && (
+            <Select value={form.knowsConsortium} onValueChange={v => setForm(f => ({ ...f, knowsConsortium: v }))}>
+              <SelectTrigger className="h-14 rounded-2xl px-5 border-none bg-[#F9F8F6] shadow-inner focus-visible:ring-1 focus-visible:ring-gold/30">
+                <SelectValue placeholder="Conhece consórcio?" />
+              </SelectTrigger>
+              <SelectContent className="rounded-2xl border-[#EDE8DC] shadow-xl">
+                <SelectItem value="Sim" className="py-3 px-4 focus:bg-gold-pale">Sim, conheço</SelectItem>
+                <SelectItem value="Não" className="py-3 px-4 focus:bg-gold-pale">Não, gostaria de entender</SelectItem>
+              </SelectContent>
+            </Select>
+          )}
         </div>
 
 

@@ -19,7 +19,7 @@ interface Props {
 }
 
 export function ContactForm({ whatsapp, objectives, creditRanges, ctaWhatsapp = "Enviar via WhatsApp", ctaForm }: Props) {
-  const [form, setForm] = useState({ name: "", phone: "", objective: "", creditRange: "", message: "" });
+  const [form, setForm] = useState({ name: "", phone: "", objective: "", creditRange: "", message: "", knowsConsortium: "" });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -59,6 +59,7 @@ export function ContactForm({ whatsapp, objectives, creditRanges, ctaWhatsapp = 
         objective: form.objective,
         credit: form.creditRange,
         message: form.message,
+        knows_consortium: form.knowsConsortium,
         form_type: "footer_contact",
         traffic_source: getTrafficSource(),
         status: "sent"
@@ -78,7 +79,9 @@ export function ContactForm({ whatsapp, objectives, creditRanges, ctaWhatsapp = 
                 phone: form.phone,
                 objective: form.objective,
                 credit: form.creditRange,
-                message: form.message
+                installment: "",
+                message: form.message,
+                knowsConsortium: form.knowsConsortium
               } 
             }
           });
@@ -92,7 +95,8 @@ export function ContactForm({ whatsapp, objectives, creditRanges, ctaWhatsapp = 
         phone: form.phone, 
         objective: form.objective, 
         creditRange: form.creditRange, 
-        message: form.message 
+        message: form.message,
+        knowsConsortium: form.knowsConsortium
       });
       
       handleWhatsAppRedirect(whatsapp, msg);
@@ -153,6 +157,15 @@ export function ContactForm({ whatsapp, objectives, creditRanges, ctaWhatsapp = 
           <SelectContent>{creditRanges.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}</SelectContent>
         </Select>
         {errors.creditRange && <p className="text-xs text-destructive mt-1">{errors.creditRange}</p>}
+      </div>
+      <div>
+        <Select value={form.knowsConsortium} onValueChange={v => setForm(f => ({ ...f, knowsConsortium: v }))}>
+          <SelectTrigger aria-label="Conhece consórcio?"><SelectValue placeholder="Conhece consórcio?" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Sim">Sim, conheço</SelectItem>
+            <SelectItem value="Não">Não, gostaria de entender</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
       <Textarea placeholder="Mensagem (opcional)" value={form.message} onChange={e => setForm(f => ({ ...f, message: e.target.value }))} rows={3} aria-label="Mensagem" />
       <Button onClick={submit} disabled={loading || checkingWhatsApp} className="w-full gap-2 bg-whatsapp hover:bg-whatsapp/90 text-white">
