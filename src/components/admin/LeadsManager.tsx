@@ -20,6 +20,7 @@ import { buildWhatsAppUrl, buildContactMessage } from "@/utils/whatsapp";
 import { calculateAge } from "@/utils/phone";
 import { useAdminLeadSelection } from "@/hooks/useAdminLeadSelection";
 import { LeadStats } from "./LeadStats";
+import { WhatsappClicksList } from "./WhatsappClicksList";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
@@ -43,6 +44,25 @@ export function LeadsManager() {
   const [dateEnd, setDateEnd] = useState<string>("");
   const [exporting, setExporting] = useState(false);
   const [deletingBulk, setDeletingBulk] = useState(false);
+  const [whatsappClicks, setWhatsappClicks] = useState<number>(0);
+
+  const fetchWhatsappClicks = async () => {
+    try {
+      let q = supabase
+        .from("whatsapp_clicks")
+        .select("id", { count: "exact", head: true });
+
+      if (dateStart) q = q.gte("created_at", startOfDay(new Date(dateStart)).toISOString());
+      if (dateEnd) q = q.lte("created_at", endOfDay(new Date(dateEnd)).toISOString());
+
+      const { count, error } = await q;
+      if (error) throw error;
+      setWhatsappClicks(count || 0);
+    } catch (err) {
+      console.warn("Falha ao contar cliques do WhatsApp:", err);
+      setWhatsappClicks(0);
+    }
+  };
 
   const fetchLeads = async () => {
     setLoading(true);
@@ -78,11 +98,13 @@ export function LeadsManager() {
     } finally {
       setLoading(false);
     }
+    fetchWhatsappClicks();
   };
 
   useEffect(() => {
     fetchLeads();
-  }, [statusFilter]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [statusFilter, dateStart, dateEnd]);
 
   const handleDelete = async (id: string) => {
     if (!confirm("Tem certeza que deseja excluir este lead?")) return;
@@ -268,7 +290,46 @@ export function LeadsManager() {
 
   return (
     <div className="space-y-6">
-      <LeadStats {...stats} />
+      {/* Filtro global de período — afeta stats, cliques e leads */}
+      <div className="bg-white p-4 md:p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col md:flex-row md:items-center gap-3 md:gap-4">
+        <div className="flex items-center gap-2 text-slate-700">
+          <Calendar className="w-4 h-4 text-gold" />
+          <span className="text-sm font-bold uppercase tracking-wider">Período</span>
+        </div>
+        <div className="flex items-center gap-2 bg-slate-50/50 border border-slate-200 rounded-xl px-3 h-11 flex-1 md:flex-initial">
+          <input
+            type="date"
+            className="bg-transparent border-none text-sm outline-none w-full sm:w-36 py-1"
+            value={dateStart}
+            onChange={e => setDateStart(e.target.value)}
+            aria-label="Data inicial"
+          />
+          <span className="text-slate-300">—</span>
+          <input
+            type="date"
+            className="bg-transparent border-none text-sm outline-none w-full sm:w-36 py-1"
+            value={dateEnd}
+            onChange={e => setDateEnd(e.target.value)}
+            aria-label="Data final"
+          />
+        </div>
+        {(dateStart || dateEnd) && (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-slate-500 hover:text-slate-700"
+            onClick={() => { setDateStart(""); setDateEnd(""); }}
+          >
+            Limpar período
+          </Button>
+        )}
+        <p className="text-xs text-slate-400 md:ml-auto">
+          O período filtra leads, cliques no WhatsApp e demais métricas abaixo.
+        </p>
+      </div>
+
+      <LeadStats {...stats} whatsappClicks={whatsappClicks} />
+      <WhatsappClicksList dateStart={dateStart} dateEnd={dateEnd} />
       <div className="bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
           <div className="relative w-full lg:w-72">
@@ -283,25 +344,6 @@ export function LeadsManager() {
           </div>
           
           <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
-            <div className="flex items-center gap-2 bg-slate-50/50 border border-slate-200 rounded-xl px-3 h-11 w-full sm:w-auto overflow-hidden">
-              <Calendar className="w-4 h-4 text-slate-400 shrink-0" />
-              <div className="flex items-center gap-1 flex-1">
-                <input 
-                  type="date" 
-                  className="bg-transparent border-none text-sm outline-none w-full sm:w-32 py-1"
-                  value={dateStart}
-                  onChange={e => setDateStart(e.target.value)}
-                />
-                <span className="text-slate-300 hidden sm:inline">—</span>
-                <input 
-                  type="date" 
-                  className="bg-transparent border-none text-sm outline-none w-full sm:w-32 py-1"
-                  value={dateEnd}
-                  onChange={e => setDateEnd(e.target.value)}
-                />
-              </div>
-            </div>
-
             <div className="flex items-center gap-2 w-full sm:w-auto">
               <select 
                 className="h-11 flex-1 sm:flex-initial rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gold/20 transition-all appearance-none pr-8 relative"

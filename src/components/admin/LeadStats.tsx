@@ -1,22 +1,26 @@
-import { Users, Send, AlertCircle, Clock } from "lucide-react";
+import { Users, Send, AlertCircle, Clock, MessageCircle } from "lucide-react";
 
 interface LeadStatsProps {
   total: number;
   sent: number;
   failed: number;
   pending: number;
+  whatsappClicks?: number;
 }
 
-export function LeadStats({ total, sent, failed, pending }: LeadStatsProps) {
+export function LeadStats({ total, sent, failed, pending, whatsappClicks }: LeadStatsProps) {
   const stats = [
     { label: "Total de Leads", value: total, icon: Users, color: "text-blue-600", bg: "bg-blue-50" },
     { label: "Enviados", value: sent, icon: Send, color: "text-green-600", bg: "bg-green-50" },
     { label: "Pendentes", value: pending, icon: Clock, color: "text-amber-600", bg: "bg-amber-50" },
     { label: "Falhas", value: failed, icon: AlertCircle, color: "text-red-600", bg: "bg-red-50" },
+    ...(typeof whatsappClicks === "number"
+      ? [{ label: "Cliques WhatsApp", value: whatsappClicks, icon: MessageCircle, color: "text-emerald-600", bg: "bg-emerald-50" }]
+      : []),
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-6">
       {stats.map((stat) => (
         <div key={stat.label} className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm flex items-center gap-3">
           <div className={`p-2 rounded-lg ${stat.bg}`}>
