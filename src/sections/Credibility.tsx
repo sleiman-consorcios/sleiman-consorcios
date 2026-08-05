@@ -1,6 +1,7 @@
 import { AnimatedSection } from "@/components/AnimatedSection";
 import { getIcon } from "@/utils/icons";
 import type { CredibilityContent } from "@/types";
+import { handleAssetError } from "@/lib/assetUrl";
 
 export function Credibility({ content }: { content: CredibilityContent }) {
   return (
@@ -36,6 +37,7 @@ export function Credibility({ content }: { content: CredibilityContent }) {
                     src={logo.image} 
                     alt={logo.name} 
                     className="h-20 sm:h-24 md:h-28 lg:h-32 w-full max-w-full object-contain mx-auto" 
+                    onError={handleAssetError}
                   />
                 ) : (
                   <span className="text-[16px] sm:text-[20px] font-semibold text-muted-foreground text-center line-clamp-1">{logo.name}</span>

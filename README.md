@@ -34,6 +34,26 @@ Execute a suíte de testes unitários:
 npm test
 ```
 
+## 🖼️ Assets estáticos
+
+As imagens e vídeos da landing page são servidos pela Vercel a partir de
+`public/assets/`. As URLs salvas no banco (bucket `site-assets` do Supabase)
+são traduzidas em tempo de leitura para `/assets/<nome-do-arquivo>`; se o
+arquivo local não existir, o componente faz fallback automático para a URL
+original do Supabase.
+
+Para copiar os arquivos, baixe os objetos do bucket e coloque-os em
+`public/assets/` mantendo apenas o nome do arquivo (sem subpastas).
+
+A variável `VITE_ASSETS_MODE` controla a origem:
+
+- `local` (padrão) — usa `public/assets/` com fallback para o Supabase.
+- `supabase` — ignora os arquivos locais e serve tudo do Storage (rollback
+  rápido, sem precisar alterar código).
+
+O upload pelo painel admin continua enviando para o Supabase Storage
+(agora em WebP e com `cache-control` de 1 ano).
+
 ## 📦 Deploy e Migração
 
 Para migrar este projeto para sua própria infraestrutura (GitHub/Supabase/Vercel) de forma 100% independente, siga as instruções em:

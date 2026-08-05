@@ -73,7 +73,7 @@ export function ImageUploadField({
           'image/gif': 'gif',
           'image/svg+xml': 'svg'
         };
-        const extension = typeMapping[blob.type] || 'jpg';
+        const extension = typeMapping[blob.type] || 'webp';
         const safeName = file.name.split(".")[0].replace(/[^a-z0-9]/gi, "-") + "." + extension;
         const optimizedFile = new File([blob], safeName, { type: blob.type });
 

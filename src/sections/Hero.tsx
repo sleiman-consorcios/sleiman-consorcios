@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import type { HeroContent, SiteConfig, SimulatorCalc } from "@/types";
+import { handleAssetError } from "@/lib/assetUrl";
 
 interface Props { content: HeroContent; config: SiteConfig; simulatorCalc: SimulatorCalc }
 
@@ -297,7 +298,7 @@ export function Hero({ content, config, simulatorCalc }: Props) {
             className="w-full h-full object-cover opacity-20" 
             alt={`Banner de consórcio - ${config.brand.name}`} 
             loading="eager"
-            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+            onError={(e) => { if (!handleAssetError(e)) (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
           />
           <div className="absolute inset-0 bg-gradient-to-r from-midnight via-midnight/80 to-transparent" />
         </div>

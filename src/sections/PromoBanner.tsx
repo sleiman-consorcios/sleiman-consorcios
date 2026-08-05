@@ -2,9 +2,23 @@ import { useState, useEffect, useCallback, useRef, useLayoutEffect } from "react
 import { Button } from "@/components/ui/button";
 import type { PromoBannerContent, PromoBannerSlide } from "@/types";
 import { Timer } from "lucide-react";
+import { handleAssetError, originalAssetUrl } from "@/lib/assetUrl";
 
 interface Props {
   content: PromoBannerContent;
+}
+
+/** Fallback de vídeo: se o arquivo local falhar, volta para a URL do Supabase. */
+function handleVideoSourceError(event: React.SyntheticEvent<HTMLSourceElement>) {
+  const source = event.currentTarget;
+  const video = source.parentElement as HTMLVideoElement | null;
+  if (!video || video.dataset.assetFallback === "1") return;
+  const original = originalAssetUrl(source.getAttribute("src") || "");
+  if (!original || original === source.getAttribute("src")) return;
+  video.dataset.assetFallback = "1";
+  video.querySelectorAll("source").forEach(el => el.remove());
+  video.setAttribute("src", original);
+  video.load();
 }
 
 function getSlides(content: PromoBannerContent): PromoBannerSlide[] {
@@ -66,6 +80,8 @@ export function PromoBanner({ content }: Props) {
   }, []);
   const timeLeft = useCountdown(content.countdownDate || "");
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const [inView, setInView] = useState(true);
 
   const next = useCallback(() => {
     if (validSlides.length <= 1) return;
@@ -99,14 +115,26 @@ export function PromoBanner({ content }: Props) {
   useEffect(() => {
     videoRefs.current.forEach((video, index) => {
       if (!video) return;
-      if (index === current) {
+      if (index === current && inView) {
         video.currentTime = 0;
-        video.play().catch(err => console.log("Video play failed:", err));
+        video.play().catch(() => { /* autoplay pode ser bloqueado */ });
       } else {
         video.pause();
       }
     });
-  }, [current]);
+  }, [current, inView]);
+
+  // Pausa todos os vídeos quando o banner sai da viewport (economiza banda/CPU)
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const observer = new IntersectionObserver(
+      entries => entries.forEach(entry => setInView(entry.isIntersecting)),
+      { threshold: 0.1 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     if (validSlides.length <= 1) return;
@@ -117,7 +145,7 @@ export function PromoBanner({ content }: Props) {
   const showCountdown = !!(content.countdownDate && timeLeft && content.showCountdown);
 
   return (
-    <section id="promo-banner" className="w-full bg-background overflow-hidden md:mt-0">
+    <section ref={sectionRef} id="promo-banner" className="w-full bg-background overflow-hidden md:mt-0">
       {showCountdown && (
         <div className="bg-accent py-2 px-4 border-b border-white/10 shadow-inner">
           <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-10">
@@ -188,12 +216,13 @@ export function PromoBanner({ content }: Props) {
                       muted
                       loop
                       playsInline
-                      preload="metadata"
+                      preload={i === 0 ? "metadata" : "none"}
                       className="w-full h-full object-cover [image-rendering:auto] [transform:translateZ(0)]"
+                      onError={handleAssetError}
                     >
-                      {slide.webmSrc && <source src={slide.webmSrc} type="video/webm" />}
-                      <source src={src} type="video/mp4" />
-                      {slide.mobileSrc && <source src={slide.mobileSrc} media="(max-width: 768px)" />}
+                      {slide.webmSrc && <source src={slide.webmSrc} type="video/webm" onError={handleVideoSourceError} />}
+                      <source src={src} type="video/mp4" onError={handleVideoSourceError} />
+                      {slide.mobileSrc && <source src={slide.mobileSrc} media="(max-width: 768px)" onError={handleVideoSourceError} />}
                     </video>
                   ) : (
                     <div className="w-full h-full">
@@ -203,6 +232,7 @@ export function PromoBanner({ content }: Props) {
                           alt={slide.alt || "Promoção Mobile"}
                           loading={i === 0 ? "eager" : "lazy"}
                           className="w-full h-full object-cover object-center"
+                          onError={handleAssetError}
                         />
                       ) : (
                         <img
@@ -210,6 +240,7 @@ export function PromoBanner({ content }: Props) {
                           alt={slide.alt || "Promoção Desktop"}
                           loading={i === 0 ? "eager" : "lazy"}
                           className="w-full h-full object-cover object-center"
+                          onError={handleAssetError}
                         />
                       )}
                     </div>

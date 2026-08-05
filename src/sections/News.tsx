@@ -1,6 +1,7 @@
 import { AnimatedSection } from "@/components/AnimatedSection";
 import type { NewsContent } from "@/types";
 import { ArrowRight } from "lucide-react";
+import { handleAssetError } from "@/lib/assetUrl";
 
 export function News({ content }: { content: NewsContent }) {
   if (!content?.items || content.items.length === 0) return null;
@@ -33,6 +34,7 @@ export function News({ content }: { content: NewsContent }) {
                       alt={item.title} 
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                       loading="lazy"
+                      onError={handleAssetError}
                     />
                   ) : (
                     <div className="w-full h-full bg-slate-200 flex items-center justify-center text-slate-400">

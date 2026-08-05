@@ -1,20 +1,28 @@
 import { SiteConfig, Content } from "@/types";
+import { resolveAssetUrlsDeep } from "@/lib/assetUrl";
 
 export const siteDataMapper = {
   toFrontend(dbConfig: any, dbContent: any): { siteConfig: SiteConfig; content: Content } {
+    // Traduz todas as URLs de mídia do bucket "site-assets" para /assets/<arquivo>.
+    // O objeto original permanece intacto (dbConfig/dbContent) e o mapa interno de
+    // assetUrl.ts guarda a URL do Supabase para o fallback visual.
+    const config = resolveAssetUrlsDeep(dbConfig ?? {});
+    const content = resolveAssetUrlsDeep(dbContent ?? {});
+
     return {
       siteConfig: {
-        ...dbConfig,
+        ...config,
         brand: {
-          ...dbConfig.brand,
-          hideName: dbConfig.brand?.hideName,
+          ...config.brand,
+          hideName: config.brand?.hideName,
         },
-        sectionOrder: dbConfig.section_order,
-        formFields: dbConfig.form_fields || dbConfig.formFields,
+        sectionOrder: config.section_order,
+        formFields: config.form_fields || config.formFields,
       },
-      content: dbContent,
+      content,
     };
   },
+
 
   toDatabase(siteConfig: SiteConfig, content: Content): { config: any; content: any } {
     const { sectionOrder, formFields, ...restConfig } = siteConfig;

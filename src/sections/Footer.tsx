@@ -1,6 +1,7 @@
 import { Instagram, Facebook, Youtube, Linkedin, MapPin, Mail, FileText, Phone } from "lucide-react";
 import { buildWhatsAppUrl } from "@/utils/whatsapp";
 import type { FooterContent, SiteConfig } from "@/types";
+import { handleAssetError } from "@/lib/assetUrl";
 
 interface Props { content: FooterContent; config: SiteConfig }
 
@@ -32,7 +33,7 @@ export function Footer({ content, config }: Props) {
                   src={config.brand.logo} 
                   alt={config.brand.name} 
                   className="h-9 w-auto object-contain" 
-                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                  onError={(e) => { if (!handleAssetError(e)) (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
                 />
               ) : (
                 <div className="w-9 h-9 bg-gold rounded-lg flex items-center justify-center font-heading text-lg font-bold text-midnight">S</div>

@@ -29,7 +29,8 @@ export async function resizeImageFile(file: File, options: ResizeOptions = {}): 
     maxWidth = 1920,
     maxHeight = 1920,
     quality = 0.82,
-    format = file.type === "image/png" ? "image/png" : "image/webp"
+    // SVG e GIF já saíram acima; todo o resto é convertido para WebP.
+    format = "image/webp"
   } = options;
 
   return new Promise((resolve, reject) => {

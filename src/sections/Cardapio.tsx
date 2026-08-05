@@ -3,6 +3,7 @@ import { AnimatedSection } from "@/components/AnimatedSection";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { CardapioContent } from "@/types";
+import { handleAssetError } from "@/lib/assetUrl";
 
 interface Props {
   content: CardapioContent;
@@ -105,6 +106,7 @@ export function Cardapio({ content }: Props) {
                         alt={item.title}
                         className="w-full h-full object-cover"
                         loading="lazy"
+                        onError={handleAssetError}
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-muted-foreground/40 text-sm">

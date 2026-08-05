@@ -1,6 +1,7 @@
 import { AnimatedSection } from "@/components/AnimatedSection";
 import { Star } from "lucide-react";
 import type { TestimonialsContent } from "@/types";
+import { handleAssetError } from "@/lib/assetUrl";
 
 export function Testimonials({ content }: { content: TestimonialsContent }) {
   if (!content.items.length) return null;
@@ -34,7 +35,7 @@ export function Testimonials({ content }: { content: TestimonialsContent }) {
                   {t.showImage !== false && (
                     <div className="w-14 h-14 rounded-full bg-gradient-to-br from-navy-light to-gold-pale flex items-center justify-center overflow-hidden shrink-0">
                       {t.image ? (
-                        <img src={t.image} alt={t.name} className="w-full h-full object-cover" />
+                        <img src={t.image} alt={t.name} className="w-full h-full object-cover" onError={handleAssetError} />
                       ) : (
                         <span className="font-heading text-[17px] font-bold text-gold">{t.name.split(" ").map(n => n[0]).join("").slice(0, 2)}</span>
                       )}

@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogClose, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import { handleAssetError } from "@/lib/assetUrl";
 
 function getYouTubeId(url: string): string | null {
   const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/);
@@ -95,6 +96,7 @@ export function Videos({ content }: { content: VideosContent }) {
                               onLoad={() => setLoadedThumbnails(prev => ({ ...prev, [i]: true }))}
                               className={`w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300 ${!loadedThumbnails[i] ? 'invisible' : 'visible'}`} 
                               loading="lazy" 
+                              onError={handleAssetError}
                             />
                           )}
 

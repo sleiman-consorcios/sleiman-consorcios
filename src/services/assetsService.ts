@@ -1,4 +1,5 @@
 import { supabase } from "../integrations/supabase/client";
+import { resolveAssetUrl } from "@/lib/assetUrl";
 
 export const assetsService = {
   async uploadSiteAsset(file: File, folder: string = "images") {
@@ -8,7 +9,11 @@ export const assetsService = {
 
     const { error: uploadError, data } = await supabase.storage
       .from("site-assets")
-      .upload(filePath, file);
+      .upload(filePath, file, {
+        cacheControl: "31536000",
+        upsert: false,
+        contentType: file.type,
+      });
 
     if (uploadError) throw uploadError;
 
@@ -23,10 +28,11 @@ export const assetsService = {
   },
 
   getPublicAssetUrl(path: string) {
-    if (path.startsWith("http")) return path;
+    if (path.startsWith("/")) return path;
+    if (path.startsWith("http")) return resolveAssetUrl(path);
     const { data: { publicUrl } } = supabase.storage
       .from("site-assets")
       .getPublicUrl(path);
-    return publicUrl;
+    return resolveAssetUrl(publicUrl);
   },
 };

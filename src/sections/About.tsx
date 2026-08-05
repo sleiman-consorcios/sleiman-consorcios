@@ -1,5 +1,6 @@
 import { AnimatedSection } from "@/components/AnimatedSection";
 import type { AboutContent } from "@/types";
+import { handleAssetError } from "@/lib/assetUrl";
 
 export function About({ content }: { content: AboutContent }) {
   return (
@@ -15,7 +16,7 @@ export function About({ content }: { content: AboutContent }) {
                   <span className="font-heading text-[80px] font-light text-gold/30">{content?.founderName?.[0] || ""}</span>
                 </div>
                 {content.image && (
-                  <img src={content.image} alt={content.title} className="w-full h-full object-cover relative z-[1]" loading="lazy" />
+                  <img src={content.image} alt={content.title} className="w-full h-full object-cover relative z-[1]" loading="lazy" onError={handleAssetError} />
                 )}
                 <div className="absolute bottom-0 left-0 right-0 p-6 z-[2]">
                   <p className="font-heading text-[26px] font-semibold text-white">{content.founderName}</p>
