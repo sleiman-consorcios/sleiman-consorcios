@@ -8,6 +8,7 @@
  */
 
 const SUPABASE_PUBLIC_MARKER = "/storage/v1/object/public/site-assets/";
+const BUCKET_NAME = "site-assets";
 
 /** Mapa localPath -> URL original do Supabase, usado no fallback visual. */
 const originalByLocalPath = new Map<string, string>();
@@ -23,11 +24,30 @@ function getAssetsMode(): "local" | "supabase" {
  */
 export function resolveAssetUrl(url: string): string {
   if (typeof url !== "string" || url.length === 0) return url;
+  
+  // Se já for uma URL local, não processa
+  if (url.startsWith("/") && !url.startsWith("//")) return url;
+
   const markerIndex = url.indexOf(SUPABASE_PUBLIC_MARKER);
-  if (markerIndex === -1) return url;
+  if (markerIndex === -1) {
+    // Tenta detectar se é uma URL do Supabase mas de outro bucket ou formato
+    if (url.includes(".supabase.co/storage/v1/object/public/")) {
+       // Se não for do nosso bucket alvo, apenas retorna a original
+       if (!url.includes(`/${BUCKET_NAME}/`)) return url;
+    } else {
+       return url;
+    }
+  }
+
   if (getAssetsMode() === "supabase") return url;
 
-  const relative = url.slice(markerIndex + SUPABASE_PUBLIC_MARKER.length).split("?")[0];
+  const afterMarker = markerIndex !== -1 
+    ? url.slice(markerIndex + SUPABASE_PUBLIC_MARKER.length)
+    : url.split(`/${BUCKET_NAME}/`)[1];
+
+  if (!afterMarker) return url;
+
+  const relative = afterMarker.split("?")[0];
   const rawFileName = relative.split("/").pop() || "";
   if (!rawFileName) return url;
 
@@ -81,11 +101,18 @@ export function handleAssetError(
     | null;
   if (!el || !("dataset" in el)) return false;
   if (el.dataset.assetFallback === "1") return false;
-
+  
   const current = el.getAttribute("src") || "";
-  const original = originalAssetUrl(current);
-  if (!original || original === current) return false;
+  if (!current) return false;
 
+  const original = originalAssetUrl(current);
+  if (!original || original === current) {
+    console.warn(`[AssetUrl] Fallback failed for: ${current}. Verifying direct URL.`);
+    if (current.includes(".supabase.co")) return false;
+    return false;
+  }
+
+  console.info(`[AssetUrl] Falling back to original asset: ${original}`);
   el.dataset.assetFallback = "1";
   el.setAttribute("src", original);
   if (el instanceof HTMLVideoElement) {

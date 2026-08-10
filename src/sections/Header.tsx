@@ -58,7 +58,7 @@ export function Header({ nav, config }: Props) {
                 src={config.brand.logo} 
                 alt={config.brand.name} 
                 className="h-10 w-auto object-contain" 
-                onError={(e) => { if (!handleAssetError(e)) (e.currentTarget as HTMLImageElement).src = "/placeholder.svg"; }}
+                onError={(e) => { if (!handleAssetError(e)) (e.currentTarget as HTMLImageElement).src = "/assets/upload/qp9g5zvgnc_1778861699076.png"; }}
               />
             ) : (
               <div className="w-10 h-10 bg-gold rounded-lg flex items-center justify-center font-heading text-xl font-bold text-midnight shadow-lg shadow-gold/20">S</div>

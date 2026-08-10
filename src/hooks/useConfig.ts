@@ -117,11 +117,15 @@ export function useConfig(isAdmin: boolean = false): UseConfigReturn {
             fetchJsonFallback<SiteConfig>("/site-config.json"),
             fetchJsonFallback<Content>("/content.json"),
           ]);
-          setSiteConfigState(site);
-          setContentState(cont);
+          // Aplica o mapeamento aos dados do JSON para garantir que resolveAssetUrl
+          // registre os caminhos locais no mapa originalByLocalPath para o fallback visual
+          const mapped = siteDataMapper.toFrontend(site, cont);
+          setSiteConfigState(mapped.siteConfig);
+          setContentState(mapped.content);
           setSource("fallback-json");
           setState("ready");
-        } catch {
+        } catch (err) {
+          console.error("useConfig fallback failed", err);
           setState("error");
         }
       } else {

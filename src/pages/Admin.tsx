@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   AlertTriangle, RotateCcw, LogOut, Lock, ArrowUp, ArrowDown, 
   CloudUpload, RefreshCw, Loader2, Eye, EyeOff, Save, CheckCircle2, History,
-  Layout, Users
+  Layout, Users, ExternalLink
 } from "lucide-react";
 import { toast } from "sonner";
 import { ContentSectionEditor } from "@/components/admin/ContentSectionEditor";
@@ -482,6 +482,11 @@ function AuthenticatedAdminPanel({ onLogout }: { onLogout: () => void }) {
                 {saving ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <CloudUpload className="w-4 h-4 mr-1" />}
                 Publicar
               </Button>
+              <Button variant="ghost" size="sm" asChild className="whitespace-nowrap hidden sm:inline-flex">
+                <a href="/" target="_blank" rel="noopener noreferrer">
+                  <ExternalLink className="w-4 h-4 mr-1" /> Ver Site
+                </a>
+              </Button>
               <Button variant="ghost" size="sm" onClick={logoutAction} className="whitespace-nowrap"><LogOut className="w-4 h-4 mr-1" />Sair</Button>
             </div>
           </div>
@@ -583,7 +588,7 @@ function AuthenticatedAdminPanel({ onLogout }: { onLogout: () => void }) {
         </footer>
         <div className="max-w-7xl mx-auto px-4 mt-8 pb-12 flex justify-end">
           <span className="text-[10px] font-medium text-muted-foreground opacity-40 hover:opacity-100 transition-opacity uppercase tracking-widest">
-            V 1.0
+            V 1.1.0
           </span>
         </div>
       </div>

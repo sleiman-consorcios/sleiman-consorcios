@@ -199,7 +199,7 @@ export function PromoBanner({ content }: Props) {
             style={{ aspectRatio: isMobile ? "1080/1350" : aspectRatio }}
           >
             {validSlides.map((slide, i) => {
-              const src = getSlideSrc(slide);
+              const slideSrc = getSlideSrc(slide);
               const isVideo = isVideoSlide(slide);
               
               return (
@@ -221,28 +221,26 @@ export function PromoBanner({ content }: Props) {
                       onError={handleAssetError}
                     >
                       {slide.webmSrc && <source src={slide.webmSrc} type="video/webm" onError={handleVideoSourceError} />}
-                      <source src={src} type="video/mp4" onError={handleVideoSourceError} />
+                      <source src={slideSrc} type="video/mp4" onError={handleVideoSourceError} />
                       {slide.mobileSrc && <source src={slide.mobileSrc} media="(max-width: 768px)" onError={handleVideoSourceError} />}
                     </video>
                   ) : (
                     <div className="w-full h-full">
-                      {isMobile && slide.mobileSrc ? (
+                      <picture className="w-full h-full">
+                        {slide.mobileSrc && (
+                          <source
+                            media="(max-width: 768px)"
+                            srcSet={slide.mobileSrc}
+                          />
+                        )}
                         <img
-                          src={slide.mobileSrc}
-                          alt={slide.alt || "Promoção Mobile"}
+                          src={slideSrc}
+                          alt={slide.alt || "Promoção"}
                           loading={i === 0 ? "eager" : "lazy"}
                           className="w-full h-full object-cover object-center"
                           onError={handleAssetError}
                         />
-                      ) : (
-                        <img
-                          src={src}
-                          alt={slide.alt || "Promoção Desktop"}
-                          loading={i === 0 ? "eager" : "lazy"}
-                          className="w-full h-full object-cover object-center"
-                          onError={handleAssetError}
-                        />
-                      )}
+                      </picture>
                     </div>
                   )}
                 </div>
