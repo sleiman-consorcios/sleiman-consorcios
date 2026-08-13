@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef, useLayoutEffect } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef, useLayoutEffect } from "react";
 import { Button } from "@/components/ui/button";
 import type { PromoBannerContent, PromoBannerSlide } from "@/types";
 import { Timer } from "lucide-react";
@@ -66,8 +66,8 @@ const useCountdown = (targetDate: string) => {
 };
 
 export function PromoBanner({ content }: Props) {
-  const slides = getSlides(content);
-  const validSlides = slides.filter(s => getSlideSrc(s));
+  const slides = useMemo(() => getSlides(content), [content]);
+  const validSlides = useMemo(() => slides.filter(s => getSlideSrc(s)), [slides]);
   const [current, setCurrent] = useState(0);
   const [aspectRatio, setAspectRatio] = useState("1920/800");
   const [isMobile, setIsMobile] = useState(false);

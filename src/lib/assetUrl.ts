@@ -101,19 +101,21 @@ export function handleAssetError(
     | null;
   if (!el || !("dataset" in el)) return false;
   if (el.dataset.assetFallback === "1") return false;
-  
+
+  // Marca a flag ANTES de qualquer outro retorno: garante que este elemento
+  // nunca dispare um segundo fallback, mesmo quando não há URL original para usar.
+  el.dataset.assetFallback = "1";
+
   const current = el.getAttribute("src") || "";
   if (!current) return false;
 
   const original = originalAssetUrl(current);
   if (!original || original === current) {
-    console.warn(`[AssetUrl] Fallback failed for: ${current}. Verifying direct URL.`);
-    if (current.includes(".supabase.co")) return false;
+    console.warn(`[AssetUrl] Fallback failed for: ${current}. No original URL known.`);
     return false;
   }
 
   console.info(`[AssetUrl] Falling back to original asset: ${original}`);
-  el.dataset.assetFallback = "1";
   el.setAttribute("src", original);
   if (el instanceof HTMLVideoElement) {
     el.querySelectorAll("source").forEach(source => source.remove());
