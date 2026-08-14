@@ -13,9 +13,9 @@ function handleVideoSourceError(event: React.SyntheticEvent<HTMLSourceElement>) 
   const source = event.currentTarget;
   const video = source.parentElement as HTMLVideoElement | null;
   if (!video || video.dataset.assetFallback === "1") return;
+  video.dataset.assetFallback = "1";
   const original = originalAssetUrl(source.getAttribute("src") || "");
   if (!original || original === source.getAttribute("src")) return;
-  video.dataset.assetFallback = "1";
   video.querySelectorAll("source").forEach(el => el.remove());
   video.setAttribute("src", original);
   video.load();
